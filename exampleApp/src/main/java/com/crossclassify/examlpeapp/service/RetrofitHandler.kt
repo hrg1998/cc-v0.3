@@ -20,6 +20,7 @@ class RetrofitHandler {
                     GsonBuilder().setLenient().create()
                 )
             )
+                //TODO: Check base url
             .baseUrl("https://hooks.slack.com/services/")
             .client(okHttpClient)
             .build()

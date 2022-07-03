@@ -42,8 +42,7 @@ class LoginActivity : TrackerActivity() {
         //set onClickListener for your submit button and call trackerClickSubmitButton
         btnSubmit.setOnClickListener {
             trackerClickSubmitButton()
-            showErrorDialog()
-//            viewModel.checkAcc(editTextEmail.text.toString())
+            viewModel.checkAcc(editTextEmail.text.toString())
             Toast.makeText(this, "You are successfully logged in", Toast.LENGTH_SHORT).show()
             clearSubmittedData()
         }
