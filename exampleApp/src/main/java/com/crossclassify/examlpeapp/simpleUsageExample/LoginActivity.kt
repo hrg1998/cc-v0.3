@@ -1,27 +1,39 @@
 package com.crossclassify.examlpeapp.simpleUsageExample
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
-import android.os.Bundle
 import android.os.Build
+import android.os.Bundle
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
+import com.crossclassify.examlpeapp.MainViewModel
 import com.crossclassify.examlpeapp.R
-import com.crossclassify.examlpeapp.defaultRecyclerViewExample.RecyclerActivity
 import com.crossclassify.examlpeapp.commonEpoxyExample.Epoxy2Activity
 import com.crossclassify.examlpeapp.defaultEpoxyWithControllerExample.EpoxyActivity
-import com.crossclassify.trackersdk.TrackerActivity
+import com.crossclassify.examlpeapp.defaultRecyclerViewExample.RecyclerActivity
 import com.crossclassify.trackersdk.ScreenNavigationTracking
+import com.crossclassify.trackersdk.TrackerActivity
 import com.crossclassify.trackersdk.model.FieldMetaData
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 //extend from TrackerActivity if you have form in activity and need form content and behavior analysis
 class LoginActivity : TrackerActivity() {
+    private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+
     //override getFormName and define a name for your form
     override fun getFormName(): String = "user-login"
+
     //use it in case that you have recyclerView
     override fun getExternalMetaData(): List<FieldMetaData>? {
         return null
     }
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +42,8 @@ class LoginActivity : TrackerActivity() {
         //set onClickListener for your submit button and call trackerClickSubmitButton
         btnSubmit.setOnClickListener {
             trackerClickSubmitButton()
+            showErrorDialog()
+//            viewModel.checkAcc(editTextEmail.text.toString())
             Toast.makeText(this, "You are successfully logged in", Toast.LENGTH_SHORT).show()
             clearSubmittedData()
         }
@@ -53,15 +67,40 @@ class LoginActivity : TrackerActivity() {
             val intent = Intent(this, Epoxy2Activity::class.java)
             startActivity(intent)
         }
+
+
+
+        viewModel.checkAccountResult.observe(this) { result ->
+            when (result) {
+                true -> goToNextPage()
+                false -> showErrorDialog()
+            }
+        }
     }
 
-    fun clearSubmittedData(){
+    private fun showErrorDialog() {
+        AlertDialog.Builder(this).apply {
+            setTitle("Your account not safe!")
+            setMessage("Check account security")
+            setPositiveButton("Ok") { dialog, _ -> dialog?.dismiss() }
+        }.create().show()
+    }
+
+    private fun goToNextPage() {
+        Toast.makeText(this, "Login accepted!", Toast.LENGTH_SHORT).show()
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(500)
+            // TODO: Create intent for open next activity
+        }
+    }
+
+    fun clearSubmittedData() {
         editTextEmail.setText("")
         editTextPassword.setText("")
-        radio1.isChecked=false
-        radio2.isChecked=false
-        checkbox_choice1.isChecked=false
-        checkbox_choice2.isChecked=false
+        radio1.isChecked = false
+        radio2.isChecked = false
+        checkbox_choice1.isChecked = false
+        checkbox_choice2.isChecked = false
     }
 
 

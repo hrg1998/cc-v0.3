@@ -57,6 +57,18 @@ dependencies {
     implementation "com.airbnb.android:epoxy:5.0.0-beta05"
     kapt "com.airbnb.android:epoxy-processor:5.0.0-beta05"
 
+    implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
+    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
+
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
+
     implementation 'com.readystatesoftware.chuck:library:1.1.0'
     implementation project(':trackerSdk')
 
