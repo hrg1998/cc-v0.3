@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val apiCall = ApiCall()
 
-    private val _checkAccountResult = SingleLiveEvent<Boolean>()
-    val checkAccountResult: LiveData<Boolean>
+    private val _checkAccountResult = SingleLiveEvent<Pair<Boolean, Int>>()
+    val checkAccountResult: LiveData<Pair<Boolean, Int>>
         get() = _checkAccountResult
 
     fun checkAcc(username: String) {
@@ -20,8 +20,16 @@ class MainViewModel : ViewModel() {
             val response = apiCall.checkAccount(username)
             if (response.isSuccessful) {
                 // check response
+                when(response.code()){
+                    200 -> {
+                        _checkAccountResult.postValue(Pair(true, response.code()))
+                    }
+                    202 -> {
+                        _checkAccountResult.postValue(Pair(false, response.code()))
+                    }
+                }
             } else {
-                // error
+                _checkAccountResult.postValue(Pair(false, -1))
             }
         }
     }

@@ -70,17 +70,29 @@ class LoginActivity : TrackerActivity() {
 
 
         viewModel.checkAccountResult.observe(this) { result ->
-            when (result) {
+            when (result.first) {
                 true -> goToNextPage()
-                false -> showErrorDialog()
+                false -> {
+                    when (result.second) {
+                        202 -> {
+                            showErrorDialog(
+                                "Your account not safe!",
+                                "Check account security.\nPlease try again after 5 second"
+                            )
+                        }
+                        -1 -> {
+                            showErrorDialog("Error", "request failed")
+                        }
+                    }
+                }
             }
         }
     }
 
-    private fun showErrorDialog() {
+    private fun showErrorDialog(title: String, message: String) {
         AlertDialog.Builder(this).apply {
-            setTitle("Your account not safe!")
-            setMessage("Check account security")
+            setTitle(title)
+            setMessage(message)
             setPositiveButton("Ok") { dialog, _ -> dialog?.dismiss() }
         }.create().show()
     }
