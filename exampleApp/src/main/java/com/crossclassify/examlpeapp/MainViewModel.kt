@@ -2,6 +2,7 @@ package com.crossclassify.examlpeapp
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.crossclassify.examlpeapp.model.CheckAccountResponseModel
 import com.crossclassify.examlpeapp.service.ApiCall
 import com.crossclassify.examlpeapp.util.SingleLiveEvent
 import kotlinx.coroutines.CoroutineScope
@@ -11,26 +12,39 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val apiCall = ApiCall()
 
-    private val _checkAccountResult = SingleLiveEvent<Pair<Boolean, Int>>()
-    val checkAccountResult: LiveData<Pair<Boolean, Int>>
+    private val _checkCreateAccountResult = SingleLiveEvent<Any?>()
+    val checkCreateAccountResult: LiveData<Any?>
+        get() = _checkCreateAccountResult
+
+    private val _checkAccountResult = SingleLiveEvent<Any?>()
+    val checkAccountResult: LiveData<Any?>
         get() = _checkAccountResult
 
-    fun checkAcc(username: String) {
+    fun createAcc(username: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = apiCall.checkAccount(username)
-            if (response.isSuccessful) {
-                // check response
-                when(response.code()){
-                    200 -> {
-                        _checkAccountResult.postValue(Pair(true, response.code()))
-                    }
-                    202 -> {
-                        _checkAccountResult.postValue(Pair(false, response.code()))
-                    }
+            val response = apiCall.createAccount(username)
+            _checkCreateAccountResult.postValue(
+                if (response.isSuccessful) {
+                    // check response
+                    response.body()
+                } else {
+                    response.code()
                 }
-            } else {
-                _checkAccountResult.postValue(Pair(false, -1))
-            }
+            )
+        }
+    }
+
+    fun checkAcc(id: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = apiCall.checkAccount(id)
+            _checkAccountResult.postValue(
+                if (response.isSuccessful) {
+                    // check response
+                    response.body()
+                } else {
+                    response.code()
+                }
+            )
         }
     }
 }
