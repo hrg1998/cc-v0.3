@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 //extend from TrackerActivity if you have form in activity and need form content and behavior analysis
 class LoginActivity : TrackerActivity() {
     private val apiMode=arrayOf("dev","prod","stg")
+    private var email:String=""
     private var mode : Int = 0
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private var id = ""
@@ -60,6 +61,7 @@ class LoginActivity : TrackerActivity() {
         //set onClickListener for your submit button and call trackerClickSubmitButton
         btnSubmit.setOnClickListener {
             loading = true
+            email= editTextEmail.text.toString()
             viewModel.createAcc(editTextEmail.text.toString())
             trackerClickSubmitButton()
             clearSubmittedData()
@@ -130,6 +132,8 @@ class LoginActivity : TrackerActivity() {
                 is Int ->{
                     loading = if(result==403){
                         showErrorDialog("Error", "Please connect with VPN")
+                        editTextEmail.setText(email)
+
                         false
                     }else{
                         showErrorDialog("Error", "Please try again later")
