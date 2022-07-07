@@ -10,13 +10,19 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 object Api {
-    private var baseUrl = "https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+    private var baseUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
     fun client(context: Context): ApiInterface {
-//        baseUrl = if (Values.CC_API){
-//            "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
-//        }else{
-//            "https://ug9id0nvch.execute-api.ap-southeast-2.amazonaws.com/"
-//        }
+        when(Values.CC_API){
+            0 ->{
+                baseUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
+            }
+            1->{
+                baseUrl ="https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+            }
+            2->{
+                baseUrl ="https://matomo-cc-stg-dinl5i5e5a-ts.a.run.app/"
+            }
+        }
         val okHttpClient: OkHttpClient = OkHttpClient.Builder().addInterceptor(
             ChuckerInterceptor.Builder(context)
                 .build()

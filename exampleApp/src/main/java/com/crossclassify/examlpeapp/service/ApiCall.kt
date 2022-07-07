@@ -1,7 +1,6 @@
 package com.crossclassify.examlpeapp.service
 
-import com.crossclassify.examlpeapp.model.CheckAccountInputModel
-import com.crossclassify.examlpeapp.model.CheckAccountResponseModel
+import com.crossclassify.examlpeapp.model.*
 import com.google.gson.JsonObject
 import retrofit2.Response
 
@@ -17,4 +16,13 @@ class ApiCall {
     suspend fun checkAccount(id: String): Response<CheckAccountResponseModel> {
         return retrofitHandler.apiDao.checkAccount(id)
     }
+
+    suspend fun createAccountForDev(username: String):Response<CheckAccountResponseModelForDev>{
+        return retrofitHandler.apiDao.createAccountForDev( CheckAccountInputModelForDev(Account(username)))
+    }
+
+    suspend fun checkAccountForDev(id: String): Response<CheckAccountResponseModelForDev> {
+        return retrofitHandler.apiDao.checkAccountForDev(id)
+    }
+
 }

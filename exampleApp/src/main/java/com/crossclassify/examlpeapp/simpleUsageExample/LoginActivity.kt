@@ -17,6 +17,7 @@ import com.crossclassify.examlpeapp.commonEpoxyExample.Epoxy2Activity
 import com.crossclassify.examlpeapp.defaultEpoxyWithControllerExample.EpoxyActivity
 import com.crossclassify.examlpeapp.defaultRecyclerViewExample.RecyclerActivity
 import com.crossclassify.examlpeapp.model.CheckAccountResponseModel
+import com.crossclassify.examlpeapp.model.CheckAccountResponseModelForDev
 import com.crossclassify.trackersdk.ScreenNavigationTracking
 import com.crossclassify.trackersdk.TrackerActivity
 import com.crossclassify.trackersdk.model.FieldMetaData
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 
 //extend from TrackerActivity if you have form in activity and need form content and behavior analysis
 class LoginActivity : TrackerActivity() {
-    private val apiMode=arrayOf("main","dev","prod")
+    private val apiMode=arrayOf("dev","prod","stg")
     private var mode : Int = 0
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private var id = ""
@@ -87,65 +88,113 @@ class LoginActivity : TrackerActivity() {
 
 
         viewModel.checkCreateAccountResult.observe(this) { result ->
-                when(result){
-                   is CheckAccountResponseModel ->{
-                       if (result._error != null && result._error.code == 409) {
-                           result._error.message.decision?.let {
-                               when (it) {
-                                   "approve" -> {
-                                       goToNextPage()
-                                   }
-                                   "decline" -> {
-                                       showErrorDialog("Error", "You cant open this account")
-                                   }
-                                   "call_for_calc" -> {
-                                       viewModel.checkAcc(result._error.message._id)
-                                   }
-                               }
-                           }
-                       } else {
-                           id = result._id
-                           viewModel.checkAcc(result._id)
-                       }
+            when(result){
+                is CheckAccountResponseModel ->{
+                    if (result._error != null && result._error.code == 409) {
+                        result._error.message.decision?.let {
+                            when (it) {
+                                "approve" -> {
+                                    goToNextPage()
+                                }
+                                "block" -> {
+                                    showErrorDialog("Blocked", "You can't open this account")
+                                }
+                                "call_for_calc" -> {
+                                    viewModel.checkAcc(result._error.message._id)
+                                }
+                            }
+                        }
+                    } else {
+                        id = result._id
+                        viewModel.checkAcc(result._id)
                     }
-                     is Int ->{
-                         if(result==403){
-                             showErrorDialog("Error", "Please connect with VPN")
-                             loading = false
-                         }
-                     }
                 }
+                is CheckAccountResponseModelForDev-> {
+                    if (result._error != null && result._error.code == 409) {
+                        result._error.massage.isBlocked.let {
+                            when (it) {
+                                true -> {
+                                    showErrorDialog("Blocked", "You can't open this account")
+                                }
+                                false -> {
+                                    goToNextPage()
 
+                                }
+                            }
+                        }
+                    } else {
+                        id = result._id
+                        viewModel.checkAcc(result._id)
+                    }
+                }
+                is Int ->{
+                    if(result==403){
+                        showErrorDialog("Error", "Please connect with VPN")
+                        loading = false
+                    }
+                }
+                else ->{
+                    loading =false
+                }
             }
 
+        }
+
         viewModel.checkAccountResult.observe(this) { result ->
-                when (result){
-                    is CheckAccountResponseModel ->{
-                        when (result.status) {
-                            "ready" -> {
-                                when(result.decision){
-                                    "approve" -> {
-                                        goToNextPage()
-                                    }
-                                    "decline" -> {
-                                        showErrorDialog("Error", "You cant open this acc")
-                                    }
+            when (result){
+                is CheckAccountResponseModel ->{
+                    when (result.status) {
+                        "ready" -> {
+                            when(result.decision){
+                                "approve" -> {
+                                    goToNextPage()
                                 }
-                                loading = false
+                                "block" -> {
+                                    showErrorDialog("Blocked", "You can't open this account")
+                                }
                             }
-                            "call_for_calc" -> {
-                                showErrorDialog(
-                                    "Your account not safe!",
-                                    "Check account security.\nPlease try again after 5 second"
-                                )
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    delay(5000)
-                                    viewModel.checkAcc(id)
-                                }
+                            loading = false
+                        }
+                        "call_for_calc" -> {
+                            showErrorDialog(
+                                "Please wait!",
+                                "Check account security.\nPlease wait"
+                            )
+                            CoroutineScope(Dispatchers.IO).launch {
+                                delay(5000)
+                                viewModel.checkAcc(id)
                             }
                         }
                     }
                 }
+                is CheckAccountResponseModelForDev ->{
+                    when (result.status) {
+                        "ready" -> {
+                            when(result.isBlocked){
+                                true -> {
+                                    showErrorDialog("Blocked", "You can't open this account")
+                                }
+                                false -> {
+                                    goToNextPage()
+                                }
+                            }
+                            loading = false
+                        }
+                        "call_for_calc" -> {
+                            showErrorDialog(
+                                "Please wait!",
+                                "Check account security.\nPlease wait"
+                            )
+                            CoroutineScope(Dispatchers.IO).launch {
+                                delay(5000)
+                                viewModel.checkAcc(id)
+                            }
+                        }
+                    }
+                }else->{
+                    loading =false
+                }
+            }
 
 
         }
@@ -195,16 +244,8 @@ class LoginActivity : TrackerActivity() {
         sv?.setOnClickListener {
             mode = (mode+1)%3
             sv.text = apiMode[mode]
+            Values.CC_API= mode
         }
-//        sv?.setOnCheckedChangeListener { buttonView, isChecked ->
-//            if (isChecked) {
-//                Toast.makeText(baseContext, "hhhhhhhhhhh", Toast.LENGTH_SHORT).show()
-//                Values.CC_API = true
-//            } else {
-//                Values.CC_API = false
-//            }
-//        }
-//        return true
         return true
 
     }
