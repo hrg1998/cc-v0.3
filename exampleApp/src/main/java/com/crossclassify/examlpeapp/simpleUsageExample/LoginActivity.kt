@@ -162,7 +162,7 @@ class LoginActivity : TrackerActivity() {
                         "call_for_calc" -> {
                             showErrorDialog(
                                 "Please wait!",
-                                "Check account security.\nPlease wait"
+                                "Verifying account..."
                             )
                             CoroutineScope(Dispatchers.IO).launch {
                                 delay(5000)
