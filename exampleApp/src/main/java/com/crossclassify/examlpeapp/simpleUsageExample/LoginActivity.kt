@@ -128,13 +128,13 @@ class LoginActivity : TrackerActivity() {
                     }
                 }
                 is Int ->{
-                    if(result==403){
+                    loading = if(result==403){
                         showErrorDialog("Error", "Please connect with VPN")
-                        loading = false
+                        false
+                    }else{
+                        showErrorDialog("Error", "Please try again later")
+                        false
                     }
-                }
-                else ->{
-                    loading =false
                 }
             }
 
@@ -191,8 +191,6 @@ class LoginActivity : TrackerActivity() {
                             }
                         }
                     }
-                }else->{
-                    loading =false
                 }
             }
 
@@ -239,7 +237,6 @@ class LoginActivity : TrackerActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.action_menu, menu)
 
-        val itemSwitch = menu?.findItem(R.id.mySwitch)
         val sv = menu?.findItem(R.id.mySwitch)?.actionView?.findViewById<Button>(R.id.action_switch)
         sv?.setOnClickListener {
             mode = (mode+1)%3
