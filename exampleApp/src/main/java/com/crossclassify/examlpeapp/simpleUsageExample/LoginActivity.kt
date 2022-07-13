@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.widget.Button
-import android.widget.Switch
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
@@ -30,8 +29,12 @@ import kotlinx.coroutines.launch
 
 //extend from TrackerActivity if you have form in activity and need form content and behavior analysis
 class LoginActivity : TrackerActivity() {
+    private var lastEmail:String=""
+    private var currentEmail:String=""
+    private var currentPassword: String = ""
+    private var maxRetry = 10
+    private var cancel: Boolean = false
     private val apiMode=arrayOf("dev","prod","stg")
-    private var email:String=""
     private var mode : Int = 0
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private var id = ""
@@ -52,6 +55,29 @@ class LoginActivity : TrackerActivity() {
     override fun getExternalMetaData(): List<FieldMetaData>? {
         return null
     }
+    private fun fillAllFields(): MutableList<Any> {
+        val myList = mutableListOf<Any>()
+        when {
+            editTextEmail.text.toString() == "" -> {
+                myList.add("email")
+                myList.add(false)
+            }
+            editTextPassword.text.toString() == "" -> {
+                myList.add("password")
+                myList.add(false)
+            }
+            else -> {
+                myList.add("all")
+                myList.add(true)
+            }
+        }
+        return myList
+    }
+
+    private fun setFields() {
+        editTextEmail.setText(currentEmail)
+        editTextPassword.setText(currentPassword)
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,11 +86,19 @@ class LoginActivity : TrackerActivity() {
 
         //set onClickListener for your submit button and call trackerClickSubmitButton
         btnSubmit.setOnClickListener {
-            loading = true
-            email= editTextEmail.text.toString()
-            viewModel.createAcc(editTextEmail.text.toString())
-            trackerClickSubmitButton()
-            clearSubmittedData()
+            cancel = false
+            maxRetry = 10
+            lastEmail = currentEmail
+            if (fillAllFields()[1] == true) {
+                currentEmail = editTextEmail.text.toString()
+                currentPassword = editTextPassword.text.toString()
+                viewModel.createAcc(currentEmail)
+                trackerClickSubmitButton()
+                loading = true
+            } else {
+                showErrorDialog("Error", "Please fill in all the fields.")
+                loading = false
+            }
         }
 
         txtRegister.setOnClickListener {
@@ -96,13 +130,36 @@ class LoginActivity : TrackerActivity() {
                         result._error.message.decision?.let {
                             when (it) {
                                 "approve" -> {
+                                    if(!cancel)
                                     goToNextPage()
                                 }
                                 "block" -> {
-                                    showErrorDialog("Blocked", "You can't open this account")
+                                    if(!cancel){
+                                        showErrorDialog("Blocked", "You can't open this account")
+                                        loading =false
+                                        setFields()
+                                    }
+
                                 }
                                 "call_for_calc" -> {
-                                    viewModel.checkAcc(result._error.message._id)
+                                    if (!cancel) {
+                                        if ((dialog == null) or (dialog?.isShowing == false))
+                                            showErrorDialogForRetry(
+                                                "Please wait!",
+                                                "Verifying account..."
+                                            )
+                                        if (maxRetry > 1) {
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                delay(5000)
+                                                viewModel.checkAcc(id)
+                                                maxRetry--
+                                            }
+                                        } else {
+                                            dialog?.dismiss()
+                                            showErrorDialog("Request Time Out!", "Please try again later!")
+                                            loading = false
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -112,19 +169,48 @@ class LoginActivity : TrackerActivity() {
                     }
                 }
                 is CheckAccountResponseModelForDev-> {
-                    if (result._error != null && result._error.code == 409) {
-                        result._error.massage.isBlocked.let {
-                            when (it) {
-                                true -> {
-                                    showErrorDialog("Blocked", "You can't open this account")
-                                }
-                                false -> {
-                                    goToNextPage()
+                    if(result.status!=null){
+                        when (result.status) {
+                            "ready" -> {
+                                when(result.isBlocked){
+                                    false -> {
+                                        if(!cancel)
+                                        goToNextPage()
+                                    }
+                                    true-> {
+                                        if(!cancel){
+                                            showErrorDialog("Blocked", "You can't open this account")
+                                            loading =false
+                                            setFields()
+                                        }
 
+                                    }
+                                }
+                                loading = false
+                            }
+                            "call_for_calc" -> {
+                                if (!cancel) {
+                                    if ((dialog == null) or (dialog?.isShowing == false))
+                                        showErrorDialogForRetry(
+                                            "Please wait!",
+                                            "Verifying account..."
+                                        )
+                                    if (maxRetry > 1) {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            delay(5000)
+                                            viewModel.checkAcc(id)
+                                            maxRetry--
+                                        }
+                                    } else {
+                                        dialog?.dismiss()
+                                        showErrorDialog("Request Time Out!", "Please try again later!")
+                                        loading = false
+                                    }
                                 }
                             }
                         }
-                    } else {
+                    }
+                    else {
                         id = result._id
                         viewModel.checkAcc(result._id)
                     }
@@ -132,11 +218,13 @@ class LoginActivity : TrackerActivity() {
                 is Int ->{
                     loading = if(result==403){
                         showErrorDialog("Error", "Please connect with VPN")
-                        editTextEmail.setText(email)
-
+                        loading=false
+                        setFields()
                         false
                     }else{
-                        showErrorDialog("Error", "Please try again later")
+                        showErrorDialog("Error", "Please try again")
+                        loading=false
+                        setFields()
                         false
                     }
                 }
@@ -151,23 +239,41 @@ class LoginActivity : TrackerActivity() {
                         "ready" -> {
                             when(result.decision){
                                 "approve" -> {
+                                    if(!cancel)
                                     goToNextPage()
                                 }
                                 "block" -> {
-                                    showErrorDialog("Blocked", "You can't open this account")
+                                    if(!cancel){
+                                        showErrorDialog("Blocked", "You can't open this account")
+                                        loading =false
+                                        setFields()
+                                    }
+
                                 }
                             }
                             loading = false
                         }
                         "call_for_calc" -> {
-                            showErrorDialog(
-                                "Please wait!",
-                                "Verifying account..."
-                            )
-                            CoroutineScope(Dispatchers.IO).launch {
-                                delay(5000)
-                                viewModel.checkAcc(id)
+                            if (!cancel) {
+                                if ((dialog == null) or (dialog?.isShowing == false))
+                                    showErrorDialogForRetry(
+                                        "Please wait!",
+                                        "Verifying account..."
+                                    )
+                                if (maxRetry > 1) {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        delay(5000)
+                                        viewModel.checkAcc(id)
+                                        maxRetry--
+                                    }
+                                } else {
+                                    dialog?.dismiss()
+                                    showErrorDialog("Request Time Out!", "Please try again later!")
+                                    loading = false
+                                }
+
                             }
+                            setFields()
                         }
                     }
                 }
@@ -176,23 +282,40 @@ class LoginActivity : TrackerActivity() {
                         "ready" -> {
                             when(result.isBlocked){
                                 true -> {
-                                    showErrorDialog("Blocked", "You can't open this account")
+                                    if(!cancel){
+                                        showErrorDialog("Blocked", "You can't open this account")
+                                        loading =false
+                                        setFields()
+                                    }
                                 }
                                 false -> {
+                                    if(!cancel)
                                     goToNextPage()
                                 }
                             }
                             loading = false
                         }
                         "call_for_calc" -> {
-                            showErrorDialog(
-                                "Please wait!",
-                                "Check account security.\nPlease wait"
-                            )
-                            CoroutineScope(Dispatchers.IO).launch {
-                                delay(5000)
-                                viewModel.checkAcc(id)
+                            if (!cancel) {
+                                if ((dialog == null) or (dialog?.isShowing == false))
+                                    showErrorDialogForRetry(
+                                        "Please wait!",
+                                        "Verifying account..."
+                                    )
+                                if (maxRetry > 1) {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        delay(5000)
+                                        viewModel.checkAcc(id)
+                                        maxRetry--
+                                    }
+                                } else {
+                                    dialog?.dismiss()
+                                    showErrorDialog("Request Time Out!", "Please try again later!")
+                                    loading = false
+                                }
+
                             }
+                            setFields()
                         }
                     }
                 }
@@ -208,6 +331,23 @@ class LoginActivity : TrackerActivity() {
             setTitle(title)
             setMessage(message)
             setPositiveButton("Ok") { dialog, _ -> dialog?.dismiss() }
+        }.create()
+        dialog?.show()
+    }
+
+
+    private fun showErrorDialogForRetry(title: String, message: String) {
+        dialog?.cancel()
+        cancel = false
+        dialog = AlertDialog.Builder(this).apply {
+            setTitle(title)
+            setMessage(message)
+            setNegativeButton("cancel") { dialog, _ ->
+                dialog?.dismiss()
+                loading = false
+                cancel = true
+                maxRetry = -1
+            }
         }.create()
         dialog?.show()
     }

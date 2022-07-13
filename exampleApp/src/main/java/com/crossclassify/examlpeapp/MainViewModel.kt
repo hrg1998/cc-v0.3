@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.crossclassify.examlpeapp.model.CheckAccountResponseModel
 import com.crossclassify.examlpeapp.service.ApiCall
 import com.crossclassify.examlpeapp.util.SingleLiveEvent
+import com.crossclassify.examlpeapp.util.Utils.toConvertStringJsonToModel
 import com.crossclassify.trackersdk.utils.objects.Values
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +45,9 @@ class MainViewModel : ViewModel() {
                         // check response
                         response.body()
                     } else {
-                        response.code()
+                        if(response.code()==409)
+                        response.errorBody()?.string()?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
+                        else response.code()
                     }
                 )
             }
@@ -73,7 +76,9 @@ class MainViewModel : ViewModel() {
                         // check response
                         response.body()
                     } else {
-                        response.code()
+                        if(response.code()==409)
+                        response.errorBody()?.string()?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
+                        else response.code()
                     }
                 )
             }

@@ -23,7 +23,6 @@ data class CheckAccountResponseModel(
 data class CheckAccountResponseModelForDev(
     val _id:String="",
     val _status: String = "",
-    val _error: ErrorDev? = null,
     val status: String = "",
     val isBlocked: Boolean
 )
