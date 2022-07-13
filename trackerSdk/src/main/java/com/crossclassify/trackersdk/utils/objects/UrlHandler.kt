@@ -40,7 +40,7 @@ object UrlHandler {
                 "&idsite=${formMetaData.id_site}&rec=${formMetaData.rec}" +
                 "&r=${formMetaData.r}&h=$hour&m=$minutes" +
                 "&s=$seconds&url=${formMetaData.fa_id}" +
-                "&_id=${formMetaData._id}&_idn=${formMetaData._idn}&_refts=${formMetaData._refts}" +
+                "&_id=${formMetaData._id}&_uid=${formMetaData.uid}&_idn=${formMetaData._idn}&_refts=${formMetaData._refts}" +
                 "&send_image=${formMetaData.sendImage}&pdf=${formMetaData.pdf}" +
                 "&qt=${formMetaData.qt}&realp=${formMetaData.realp}&wma=${formMetaData.wma}" +
                 "&fla=${formMetaData.fla}&java=${formMetaData.java}&ag=${formMetaData.ag}" +

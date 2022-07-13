@@ -68,6 +68,7 @@ abstract class TrackerSdkApplication : Application() {
                         MODE_PRIVATE
                     )
                     sharedPreferences.edit().putString("tracker.visitorid", visitorId).apply()
+                    sharedPreferences.edit().putString("tracker.fingerprint",userId).apply()
                 }
             }
         }
