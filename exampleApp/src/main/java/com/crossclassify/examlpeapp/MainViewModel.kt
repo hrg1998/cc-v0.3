@@ -10,6 +10,8 @@ import com.crossclassify.trackersdk.utils.objects.Values
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.util.concurrent.TimeoutException
 
 class MainViewModel : ViewModel() {
     private val apiCall = ApiCall()
@@ -25,62 +27,80 @@ class MainViewModel : ViewModel() {
     fun createAcc(username: String) {
         CoroutineScope(Dispatchers.IO).launch {
 
-           val response= when(Values.CC_API){
-                0->{
-                    apiCall.createAccountForDev(username)
+            val response =
+                try {
+                    when (Values.CC_API) {
+                        0 -> {
+                            apiCall.createAccountForDev(username)
+                        }
+                        1 -> {
+                            apiCall.createAccount(username)
+                        }
+                        2 -> {
+                            apiCall.createAccountForDev(username)
+                        }
+                        else -> {
+                            null
+                        }
+                    }
+
+                } catch (e: Exception) {
+                    null
                 }
-                1->{
-                    apiCall.createAccount(username)
-                }
-                2->{
-                    apiCall.createAccountForDev(username)
-                }
-               else->{
-                   null
-               }
-           }
             if (response != null) {
                 _checkCreateAccountResult.postValue(
                     if (response.isSuccessful) {
                         // check response
                         response.body()
                     } else {
-                        if(response.code()==409)
-                        response.errorBody()?.string()?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
+                        if (response.code() == 409)
+                            response.errorBody()?.string()
+                                ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
                         else response.code()
                     }
                 )
+            } else {
+                "timeOut"
             }
         }
     }
 
     fun checkAcc(id: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response= when(Values.CC_API){
-                0->{
-                    apiCall.checkAccountForDev(id)
-                }
-                1->{
-                    apiCall.checkAccount(id)
-                }
-                2->{
-                    apiCall.checkAccountForDev(id)
-                }
-                else->{
+            val response =
+                try {
+                    when (Values.CC_API) {
+                        0 -> {
+                            apiCall.checkAccountForDev(id)
+                        }
+                        1 -> {
+                            apiCall.checkAccount(id)
+                        }
+                        2 -> {
+                            apiCall.checkAccountForDev(id)
+                        }
+                        else -> {
+                            null
+                        }
+                    }
+
+                } catch (e: Exception) {
                     null
                 }
-            }
             if (response != null) {
                 _checkAccountResult.postValue(
                     if (response.isSuccessful) {
                         // check response
                         response.body()
                     } else {
-                        if(response.code()==409)
-                        response.errorBody()?.string()?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
+                        if (response.code() == 409)
+                            response.errorBody()?.string()
+                                ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
                         else response.code()
                     }
                 )
+            } else {
+                "timeOut"
             }
         }
     }

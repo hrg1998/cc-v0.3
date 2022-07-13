@@ -228,6 +228,11 @@ class LoginActivity : TrackerActivity() {
                         false
                     }
                 }
+                is String ->{
+                    showErrorDialog("Request Time Out!","Please try again...")
+                    loading=false
+                    setFields()
+                }
             }
 
         }
@@ -318,6 +323,11 @@ class LoginActivity : TrackerActivity() {
                             setFields()
                         }
                     }
+                }
+                is String ->{
+                    showErrorDialog("Request Time Out!","Please try again...")
+                    loading=false
+                    setFields()
                 }
             }
 
