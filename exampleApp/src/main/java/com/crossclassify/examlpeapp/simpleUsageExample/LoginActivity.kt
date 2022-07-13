@@ -156,7 +156,7 @@ class LoginActivity : TrackerActivity() {
                                             }
                                         } else {
                                             dialog?.dismiss()
-                                            showErrorDialog("Request Time Out!", "Please try again later!")
+                                            showErrorDialog("Error!", "The system is not available!")
                                             loading = false
                                         }
                                     }
@@ -203,7 +203,7 @@ class LoginActivity : TrackerActivity() {
                                         }
                                     } else {
                                         dialog?.dismiss()
-                                        showErrorDialog("Request Time Out!", "Please try again later!")
+                                        showErrorDialog("Error!", "The system is not available!")
                                         loading = false
                                     }
                                 }
@@ -268,7 +268,7 @@ class LoginActivity : TrackerActivity() {
                                     }
                                 } else {
                                     dialog?.dismiss()
-                                    showErrorDialog("Request Time Out!", "Please try again later!")
+                                    showErrorDialog("Error!", "The system is not available!")
                                     loading = false
                                 }
 
@@ -310,7 +310,7 @@ class LoginActivity : TrackerActivity() {
                                     }
                                 } else {
                                     dialog?.dismiss()
-                                    showErrorDialog("Request Time Out!", "Please try again later!")
+                                    showErrorDialog("Error", "The system is not available!")
                                     loading = false
                                 }
 
