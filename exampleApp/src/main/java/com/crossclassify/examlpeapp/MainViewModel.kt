@@ -47,8 +47,9 @@ class MainViewModel : ViewModel() {
                 } catch (e: Exception) {
                     null
                 }
-            if (response != null) {
-                _checkCreateAccountResult.postValue(
+
+            _checkCreateAccountResult.postValue(
+                if (response != null) {
                     if (response.isSuccessful) {
                         // check response
                         response.body()
@@ -58,10 +59,11 @@ class MainViewModel : ViewModel() {
                                 ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
                         else response.code()
                     }
-                )
-            } else {
-                "timeOut"
-            }
+
+                } else {
+                    "timeOut"
+                }
+            )
         }
     }
 
@@ -87,8 +89,9 @@ class MainViewModel : ViewModel() {
                 } catch (e: Exception) {
                     null
                 }
-            if (response != null) {
-                _checkAccountResult.postValue(
+
+            _checkAccountResult.postValue(
+                if (response != null) {
                     if (response.isSuccessful) {
                         // check response
                         response.body()
@@ -98,10 +101,11 @@ class MainViewModel : ViewModel() {
                                 ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
                         else response.code()
                     }
-                )
-            } else {
-                "timeOut"
-            }
+
+                } else {
+                    "timeOut"
+                }
+            )
         }
     }
 }

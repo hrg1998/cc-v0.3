@@ -1,6 +1,7 @@
 package com.crossclassify.examlpeapp.simpleUsageExample
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.crossclassify.trackersdk.TrackerActivity
 import com.crossclassify.trackersdk.model.FieldMetaData
 import com.crossclassify.trackersdk.utils.objects.Values
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.custom_dialog.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -38,7 +40,7 @@ class LoginActivity : TrackerActivity() {
     private var mode : Int = 0
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private var id = ""
-    private var dialog: AlertDialog? = null
+    private var dialog: Dialog? = null
     private var loading = false
         set(value) {
             field = value
@@ -222,14 +224,14 @@ class LoginActivity : TrackerActivity() {
                         setFields()
                         false
                     }else{
-                        showErrorDialog("Error", "Please try again")
+                        showErrorDialog("Unknown Response!", "Please try again...")
                         loading=false
                         setFields()
                         false
                     }
                 }
                 is String ->{
-                    showErrorDialog("Request Time Out!","Please try again...")
+                    showErrorDialog("Request Time Out!","Please check your connection...")
                     loading=false
                     setFields()
                 }
@@ -325,7 +327,7 @@ class LoginActivity : TrackerActivity() {
                     }
                 }
                 is String ->{
-                    showErrorDialog("Request Time Out!","Please try again...")
+                    showErrorDialog("Request Time Out!","Please check your connection...")
                     loading=false
                     setFields()
                 }
@@ -337,11 +339,16 @@ class LoginActivity : TrackerActivity() {
 
     private fun showErrorDialog(title: String, message: String) {
         dialog?.cancel()
-        dialog = AlertDialog.Builder(this).apply {
-            setTitle(title)
-            setMessage(message)
-            setPositiveButton("Ok") { dialog, _ -> dialog?.dismiss() }
-        }.create()
+        dialog = Dialog(this)
+        dialog!!.setContentView(R.layout.custom_dialog)
+        dialog!!.txt_title.text = title
+        dialog!!.txt_massage.text= message
+        dialog!!.txt_cancel.text="ok"
+        dialog!!.progress_bar.visibility=View.GONE
+        dialog!!.txt_cancel.setOnClickListener {
+            dialog?.dismiss()
+        }
+
         dialog?.show()
     }
 
@@ -349,17 +356,21 @@ class LoginActivity : TrackerActivity() {
     private fun showErrorDialogForRetry(title: String, message: String) {
         dialog?.cancel()
         cancel = false
-        dialog = AlertDialog.Builder(this).apply {
-            setTitle(title)
-            setMessage(message)
-            setNegativeButton("cancel") { dialog, _ ->
-                dialog?.dismiss()
-                loading = false
-                cancel = true
-                maxRetry = -1
-            }
-        }.create()
+        dialog = Dialog(this)
+        dialog!!.setContentView(R.layout.custom_dialog)
+        dialog!!.progress_bar.visibility=View.VISIBLE
+        dialog!!.txt_title.text = title
+        dialog!!.txt_massage.text= message
+        dialog!!.txt_cancel.text="cancel"
+        dialog!!.txt_cancel.setOnClickListener {
+            dialog?.dismiss()
+            loading = false
+            cancel = true
+            maxRetry = -1
+        }
+
         dialog?.show()
+
     }
 
     private fun goToNextPage() {
