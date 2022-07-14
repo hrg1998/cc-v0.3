@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DataEntryTestInCloudPlatform</string>
+    <string name="app_name">Data entry test internal app</string>
     <string name="login_email_hint">Email</string>
     <string name="login_password_hint">Password</string>
     <string name="here_s_nyour_first_nstep_with_nus">Here’s\nyour first\nstep with \nus!</string>
