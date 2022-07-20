@@ -19,7 +19,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         //splash screen
         Handler().postDelayed({
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, SignUpActivity::class.java))
             finish()
         }, 2500)
     }

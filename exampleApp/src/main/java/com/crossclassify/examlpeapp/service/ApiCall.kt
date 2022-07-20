@@ -9,14 +9,6 @@ class ApiCall {
         RetrofitHandler()
     }
 
-    suspend fun createAccount(username: String): Response<CheckAccountResponseModel> {
-        return retrofitHandler.apiDao.createAccount(CheckAccountInputModel(username))
-    }
-
-    suspend fun checkAccount(id: String): Response<CheckAccountResponseModel> {
-        return retrofitHandler.apiDao.checkAccount(id)
-    }
-
     suspend fun createAccountForDev(username: String):Response<CheckAccountResponseModelForDev>{
         return retrofitHandler.apiDao.createAccountForDev( CheckAccountInputModelForDev(Account(username)))
     }

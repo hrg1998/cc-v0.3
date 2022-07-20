@@ -2,7 +2,7 @@ package com.crossclassify.examlpeapp
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.crossclassify.examlpeapp.model.CheckAccountResponseModel
+import com.crossclassify.examlpeapp.model.CheckAccountResponseModelForDev
 import com.crossclassify.examlpeapp.service.ApiCall
 import com.crossclassify.examlpeapp.util.SingleLiveEvent
 import com.crossclassify.examlpeapp.util.Utils.toConvertStringJsonToModel
@@ -29,21 +29,7 @@ class MainViewModel : ViewModel() {
 
             val response =
                 try {
-                    when (Values.CC_API) {
-                        0 -> {
-                            apiCall.createAccountForDev(username)
-                        }
-                        1 -> {
-                            apiCall.createAccount(username)
-                        }
-                        2 -> {
-                            apiCall.createAccountForDev(username)
-                        }
-                        else -> {
-                            null
-                        }
-                    }
-
+                    apiCall.createAccountForDev(username)
                 } catch (e: Exception) {
                     null
                 }
@@ -56,7 +42,7 @@ class MainViewModel : ViewModel() {
                     } else {
                         if (response.code() == 409)
                             response.errorBody()?.string()
-                                ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
+                                ?.toConvertStringJsonToModel(CheckAccountResponseModelForDev::class.java)
                         else response.code()
                     }
 
@@ -71,20 +57,9 @@ class MainViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             val response =
                 try {
-                    when (Values.CC_API) {
-                        0 -> {
                             apiCall.checkAccountForDev(id)
-                        }
-                        1 -> {
-                            apiCall.checkAccount(id)
-                        }
-                        2 -> {
-                            apiCall.checkAccountForDev(id)
-                        }
-                        else -> {
-                            null
-                        }
-                    }
+
+
 
                 } catch (e: Exception) {
                     null
@@ -98,7 +73,7 @@ class MainViewModel : ViewModel() {
                     } else {
                         if (response.code() == 409)
                             response.errorBody()?.string()
-                                ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
+                                ?.toConvertStringJsonToModel(CheckAccountResponseModelForDev::class.java)
                         else response.code()
                     }
 

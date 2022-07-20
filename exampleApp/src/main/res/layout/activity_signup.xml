@@ -1,13 +1,301 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".simpleUsageExample.SignUpActivity">
-<androidx.fragment.app.FragmentContainerView
-    android:id="@+id/fragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:name="com.crossclassify.examlpeapp.simpleUsageExample.SignUpFragment"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:layout_gravity="center"
+    android:background="@color/login_bk_color"
+    android:focusableInTouchMode="true"
+    android:gravity="center"
+    >
+<!--    Use CustomEditText for all of your form fields-->
+<!--    in Xml file and set each field name to fieldName(e.g Email),-->
+<!--    that allows us to provide Form Behavioral Tracking.-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:paddingTop="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@id/text"
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/new_user_register_now" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"
+                    android:layout_toEndOf="@id/text"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/ic_register_hero" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputUserName"
+                    style="@style/parent"
+                    android:layout_marginTop="@dimen/loginViewsMargin"
+                    android:textColorHint="@color/hint">
+
+                    <!--                    Field contents are not captured -->
+                    <!--                    unless you add IncludeContentTracking Tag -->
+                    <!--                    for the field that you need Field Content Tracking.-->
+                    <com.crossclassify.trackersdk.TrackerEditText
+                        android:id="@+id/editTextUserName"
+
+                        style="@style/modifiedEditText"
+                        android:autofillHints="Email"
+
+                        android:ellipsize="end"
+                        android:hint="Username"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:tag="@string/IsTrackable"
+                        android:textColor="@color/black"
+                        android:transitionName="@string/login_email_hint"
+                        app:fieldName="username" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputEmail"
+                    style="@style/parent"
+                    android:layout_marginTop="@dimen/loginViewsMargin"
+                    android:textColorHint="@color/hint">
+
+                    <!--                    Field contents are not captured -->
+                    <!--                    unless you add IncludeContentTracking Tag -->
+                    <!--                    for the field that you need Field Content Tracking.-->
+                    <com.crossclassify.trackersdk.TrackerEditText
+                        android:id="@+id/editTextEmail"
+
+                        style="@style/modifiedEditText"
+                        android:autofillHints="Email"
+
+                        android:ellipsize="end"
+                        android:hint="@string/login_email_hint"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:tag="@string/IsTrackable"
+                        android:textColor="@color/black"
+                        android:transitionName="@string/login_email_hint"
+                        app:fieldName="email" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputPassword"
+                    style="@style/parent"
+                    android:layout_marginTop="@dimen/loginViewsMargin"
+                    android:textColorHint="@color/hint">
+
+                    <com.crossclassify.trackersdk.TrackerEditText
+                        android:id="@+id/editTextPassword"
+                        style="@style/modifiedEditText"
+
+                        android:autofillHints="Password"
+                        android:hint="@string/login_password_hint"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:textColor="@color/black"
+                        android:transitionName="@string/login_password_hint"
+                        app:fieldName="password" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputConfirm"
+                    style="@style/parent"
+                    android:layout_marginTop="@dimen/loginViewsMargin"
+                    android:textColorHint="@color/hint">
+
+                    <com.crossclassify.trackersdk.TrackerEditText
+                        android:id="@+id/editTextConfirmPassword"
+                        style="@style/modifiedEditText"
+
+                        android:autofillHints="ConfirmPassword"
+                        android:hint="ConfirmPassword"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:textColor="@color/black"
+                        android:transitionName="ConfirmPassword"
+                        app:fieldName="confirmPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!--                <com.crossclassify.trackersdk.TrackerRadioGroup-->
+                <!--                    android:id="@+id/radiogroup"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:tag="@string/IsTrackable"-->
+                <!--                    app:radio_field_name="hosting">-->
+
+                <!--                    <RadioButton-->
+                <!--                        android:id="@+id/radio1"-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="match_parent"-->
+                <!--                        android:text="yes"-->
+                <!--                        android:textColor="@color/black" />-->
+
+                <!--                    <RadioButton-->
+                <!--                        android:id="@+id/radio2"-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="match_parent"-->
+                <!--                        android:text="no"-->
+                <!--                        android:textColor="@color/black" />-->
+                <!--                </com.crossclassify.trackersdk.TrackerRadioGroup>-->
+
+                <!--                <LinearLayout-->
+                <!--                    android:layout_width="fill_parent"-->
+                <!--                    android:layout_height="fill_parent"-->
+                <!--                    android:orientation="vertical">-->
+
+                <!--                    <com.crossclassify.trackersdk.TrackerCheckBox-->
+                <!--                        android:id="@+id/checkbox_choice1"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:tag="@string/IsTrackable"-->
+                <!--                        android:text="choice1"-->
+                <!--                        android:textColor="@color/black"-->
+                <!--                        app:check_box_field_name="choice1" />-->
+
+                <!--                    <com.crossclassify.trackersdk.TrackerCheckBox-->
+                <!--                        android:id="@+id/checkbox_choice2"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="choice2"-->
+                <!--                        android:textColor="@color/black"-->
+                <!--                        app:check_box_field_name="choice2" />-->
+                <!--                </LinearLayout>-->
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/btnSubmit"
+                style="@style/loginButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/loginViewsMargin"
+                android:text="Sign Up" />
+
+            <TextView
+                android:id="@+id/goToLogin"
+                style="@style/parent"
+                android:layout_marginTop="@dimen/loginViewsMargin"
+                android:text="Already have an account?"
+                android:textAlignment="center"
+                android:textColor="@color/themeColor"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                tools:ignore="UsingOnClickInXml" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:weightSum="20">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="5"
+                    android:background="@color/colorPrimaryDark" />
+
+                <TextView
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="6"
+                    android:text="@string/use_other_methods"
+                    android:textAlignment="center"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/goToRecycler"
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="right"
+                    android:text="default / "
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/goToEpoxy"
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="epoxy/"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/goToEpoxy2"
+                    style="@style/viewParent.headerText.NoMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="left"
+                    android:text="epoxy2"
+                    android:textSize="12sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="5"
+                    android:background="@color/colorPrimaryDark" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="11dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/ic_side_bg" />
+
+    <FrameLayout
+        android:id="@+id/layoutLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ABFFFFFF"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+</RelativeLayout>
+

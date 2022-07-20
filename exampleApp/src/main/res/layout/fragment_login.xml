@@ -23,7 +23,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="20dp">
 
@@ -32,12 +32,14 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/txt_login"
                     style="@style/viewParent.headerText.NoMode"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/new_user_register_now" />
+                    android:text="@string/already_nhave_an_naccount" />
 
                 <ImageView
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -47,9 +49,11 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:layout_marginTop="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputEmail"
@@ -95,25 +99,6 @@
                         app:fieldName="password" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputConfirmPassword"
-                    style="@style/parent"
-                    android:layout_marginTop="@dimen/loginViewsMargin"
-                    android:textColorHint="@color/hint">
-
-                    <com.crossclassify.trackersdk.TrackerEditText
-                        android:id="@+id/editTextConfirmPassword"
-                        style="@style/modifiedEditText"
-
-                        android:autofillHints="Password"
-                        android:hint="ConfirmPassword"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:textColor="@color/black"
-                        android:transitionName="@string/login_password_hint"
-                        app:fieldName="ConfirmPassword" />
-                </com.google.android.material.textfield.TextInputLayout>
-
 
             </LinearLayout>
 
@@ -122,68 +107,20 @@
                 android:id="@+id/btnSubmitFragment"
                 style="@style/loginButton"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/loginViewsMargin"
-                android:text="SIGNUP" />
+                android:layout_marginTop="40dp"
+                android:text="LOGIN" />
 
 
             <TextView
+                android:id="@+id/goToRegister"
                 style="@style/parent"
                 android:layout_marginTop="@dimen/loginViewsMargin"
-                android:text="@string/already_have_an_account"
+                android:text="@string/new_user_register_now"
                 android:textAlignment="center"
                 android:textColor="@color/themeColor"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:gravity="center"
-                android:weightSum="12">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="3"
-                    android:background="@color/colorPrimaryDark" />
-
-                <TextView
-                    style="@style/viewParent.headerText.NoMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="6"
-                    android:text="@string/use_other_methods"
-                    android:textAlignment="center"
-                    android:textSize="12sp" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="3"
-                    android:background="@color/colorPrimaryDark" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ic_facebook" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:contentDescription="@string/todo"
-                    android:src="@drawable/ic_google_plus" />
-            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

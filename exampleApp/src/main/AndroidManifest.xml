@@ -26,7 +26,7 @@
             android:name=".defaultRecyclerViewExample.RecyclerActivity"
             android:exported="false" />
         <activity
-            android:name=".simpleUsageExample.SignUpActivity"
+            android:name=".simpleUsageExample.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".simpleUsageExample.SplashScreenActivity"
@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".simpleUsageExample.LoginActivity"
+            android:name=".simpleUsageExample.SignUpActivity"
             android:exported="true" />
     </application>
 
