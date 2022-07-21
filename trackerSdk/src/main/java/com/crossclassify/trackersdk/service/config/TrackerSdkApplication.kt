@@ -102,8 +102,22 @@ abstract class TrackerSdkApplication : Application() {
 
     /** Initialize Matomo EndPoint **/
     private fun onCreateTrackerConfig(): TrackerBuilder {
+
+        //TODO: THIS FUNCTIONALITY DOES NOT WORK!
+        var apiUrl=""
+        when(Values.CC_API){
+            0 ->{
+                apiUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
+            }
+            1->{
+                apiUrl ="https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+            }
+            2->{
+                apiUrl ="https://matomo-cc-stg-dinl5i5e5a-ts.a.run.app/"
+            }
+        }
         return TrackerBuilder.createDefault(
-            "https://matomo-cc-dinl5i5e5a-ts.a.run.app/matomo.php",
+            apiUrl,
             this.mSiteId
         )
     }

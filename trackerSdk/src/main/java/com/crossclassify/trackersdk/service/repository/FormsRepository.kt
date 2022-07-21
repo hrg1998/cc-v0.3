@@ -10,6 +10,7 @@ import com.crossclassify.trackersdk.service.config.Api
 import com.crossclassify.trackersdk.utils.objects.ConfigPreferencesSerializer
 import com.crossclassify.trackersdk.utils.objects.DATA_STORE_FILE_NAME
 import com.crossclassify.trackersdk.utils.objects.UrlHandler
+import com.crossclassify.trackersdk.utils.objects.Values
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -39,7 +40,20 @@ class FormsRepository(private val context: Context) {
 
         return try {
             if (formName !in forms) {
-                val newFormPath = UrlHandler.generateNewFormUrl(formMetaData, formName)
+                var newFormPath = UrlHandler.generateNewFormUrl(formMetaData, formName)
+                var baseUrl =""
+                when(Values.CC_API){
+                    0 ->{
+                        baseUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
+                    }
+                    1->{
+                        baseUrl ="https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+                    }
+                    2->{
+                        baseUrl ="https://matomo-cc-stg-dinl5i5e5a-ts.a.run.app/"
+                    }
+                }
+                newFormPath = baseUrl + newFormPath
                 val newFormCall = Api.client(context).sendData(newFormPath)
                 Timber.tag("crossClassifyGenerateNewForm: ").i(newFormPath)
                 newFormCall.enqueue(object : Callback<ResponseBody> {
@@ -63,8 +77,20 @@ class FormsRepository(private val context: Context) {
 
             if(formMetaData.fieldsMetaData.isNotEmpty()) {
                 /** Generate Url **/
-                val metaDataPath = UrlHandler.generateMetaDataUrl(formMetaData)
-
+                var metaDataPath = UrlHandler.generateMetaDataUrl(formMetaData)
+                var baseUrl=""
+                when(Values.CC_API){
+                    0 ->{
+                        baseUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
+                    }
+                    1->{
+                        baseUrl ="https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+                    }
+                    2->{
+                        baseUrl ="https://matomo-cc-stg-dinl5i5e5a-ts.a.run.app/"
+                    }
+                }
+                metaDataPath = baseUrl+metaDataPath
                 Timber.tag("crossClassifySentMetaData: ").i(metaDataPath)
                 /** Send API Request **/
                 val call = Api.client(context).sendData(metaDataPath)

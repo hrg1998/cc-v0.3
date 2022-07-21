@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.util.Patterns
 import android.view.Menu
 import android.view.View
 import android.widget.Button
@@ -99,21 +101,30 @@ class SignUpActivity : TrackerActivity() {
 
         //set onClickListener for your submit button and call trackerClickSubmitButton
         btnSubmit.setOnClickListener {
+            Log.i("crossClassify:",Values.CC_API.toString())
             cancel = false
             maxRetry = 15
             lastEmail = currentEmail
             if (fillAllFields()[1] == true) {
-                if(editTextPassword.text.toString()!=editTextConfirmPassword.text.toString()){
-                    showErrorDialog("Error", "Confirm password doesn't match.")
-                    loading = false
-                }else{
-                    currentEmail = editTextEmail.text.toString()
-                    currentUsername = editTextUserName.text.toString()
-                    currentPassword = editTextPassword.text.toString()
-                    currentConfirmPass = editTextConfirmPassword.text.toString()
-                    viewModel.createAcc(currentEmail)
-                    trackerClickSubmitButton()
-                    loading = true
+                when {
+                    editTextPassword.text.toString()!=editTextConfirmPassword.text.toString() -> {
+                        showErrorDialog("Error", "Confirm password doesn't match.")
+                        loading = false
+                    }
+                    !Patterns.EMAIL_ADDRESS.matcher(editTextEmail.text.toString()).matches() -> {
+                        showErrorDialog("Incorrect Email", "Email address is incorrect.")
+                        loading = false
+                    }
+                    else -> {
+                        currentEmail = editTextEmail.text.toString()
+                        currentUsername = editTextUserName.text.toString()
+                        currentPassword = editTextPassword.text.toString()
+                        currentConfirmPass = editTextConfirmPassword.text.toString()
+                        viewModel.createAcc(currentEmail)
+                        trackerClickSubmitButton()
+                        trackerClickSubmitButton()
+                        loading = true
+                    }
                 }
             } else {
                 showErrorDialog("Error", "Please fill in all the fields.")

@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import java.util.concurrent.TimeoutException
 
 class MainViewModel : ViewModel() {
     private val apiCall = ApiCall()
@@ -24,12 +23,31 @@ class MainViewModel : ViewModel() {
     val checkAccountResult: LiveData<Any?>
         get() = _checkAccountResult
 
+    var baseUrl =""
+
     fun createAcc(username: String) {
         CoroutineScope(Dispatchers.IO).launch {
 
             val response =
                 try {
-                    apiCall.createAccountForDev(username)
+                    when(Values.CC_API){
+                        0 ->{
+                            apiCall.createAccount(username,"https://eve-dev-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision")
+                        }
+                        1->{
+                            apiCall.createAccount(username,"https://eve-prod-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision")
+                        }
+                        2 ->{
+                            apiCall.createAccount(username,"https://eve-stg-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision")
+                        }
+                        else ->{
+                            null
+                        }
+                    }
+
                 } catch (e: Exception) {
                     null
                 }
@@ -57,10 +75,23 @@ class MainViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             val response =
                 try {
-                            apiCall.checkAccountForDev(id)
-
-
-
+                    when(Values.CC_API){
+                        0 ->{
+                            apiCall.checkAccount(id,"https://eve-dev-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision/{id}")
+                        }
+                        1->{
+                            apiCall.checkAccount(id,"https://eve-prod-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision/{id}")
+                        }
+                        2 ->{
+                            apiCall.checkAccount(id,"https://eve-stg-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision/{id}")
+                        }
+                        else ->{
+                            null
+                        }
+                    }
                 } catch (e: Exception) {
                     null
                 }
