@@ -12,5 +12,5 @@ interface ApiDaoDev {
     suspend fun createAccountForDev(@Body checkAccountInputModelForDev: CheckAccountInputModelForDev,@Url url:String): Response<CheckAccountResponseModelForDev>
 
     @GET
-    suspend fun checkAccountForDev(@Path("id") id: String,@Url url:String): Response<CheckAccountResponseModelForDev>
+    suspend fun checkAccountForDev(@Url url:String): Response<CheckAccountResponseModelForDev>
 }

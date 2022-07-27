@@ -325,21 +325,11 @@ class SignUpActivity : TrackerActivity() {
         }
     }
 
-    fun clearSubmittedData() {
-        editTextEmail.setText("")
-        editTextPassword.setText("")
-//        radio1.isChecked = false
-//        radio2.isChecked = false
-//        checkbox_choice1.isChecked = false
-//        checkbox_choice2.isChecked = false
-    }
-
-
     override fun onResume() {
         super.onResume()
         //screen navigation tracking
         //pass activity path and title to trackNavigation method for screen navigation purposes
-        ScreenNavigationTracking().trackNavigation("/activity_splash/activity_login", "Login")
+        ScreenNavigationTracking().trackNavigation("/activity_splash/activity_signup", "signup")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -351,6 +341,7 @@ class SignUpActivity : TrackerActivity() {
             sv.text = apiMode[mode]
             Values.CC_API= mode
         }
+        onResume()
         return true
 
     }

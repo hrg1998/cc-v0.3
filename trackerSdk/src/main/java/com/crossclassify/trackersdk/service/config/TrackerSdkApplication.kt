@@ -101,7 +101,7 @@ abstract class TrackerSdkApplication : Application() {
     }
 
     /** Initialize Matomo EndPoint **/
-    private fun onCreateTrackerConfig(): TrackerBuilder {
+    fun onCreateTrackerConfig(): TrackerBuilder {
 
         //TODO: THIS FUNCTIONALITY DOES NOT WORK!
         var apiUrl=""

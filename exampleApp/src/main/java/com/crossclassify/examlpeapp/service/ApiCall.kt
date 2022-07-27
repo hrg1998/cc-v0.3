@@ -15,9 +15,9 @@ class ApiCall {
         return apiDaoDev.createAccountForDev( CheckAccountInputModelForDev(Account(username)),url)
     }
 
-    suspend fun checkAccount(id: String, url:String): Response<CheckAccountResponseModelForDev> {
+    suspend fun checkAccount(url:String): Response<CheckAccountResponseModelForDev> {
         val apiDaoDev =retrofitHandler.apiDao as ApiDaoDev
-        return apiDaoDev.checkAccountForDev(id,url)
+        return apiDaoDev.checkAccountForDev(url)
     }
 
 

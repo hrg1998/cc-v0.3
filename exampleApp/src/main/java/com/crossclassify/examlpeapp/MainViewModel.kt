@@ -77,16 +77,16 @@ class MainViewModel : ViewModel() {
                 try {
                     when(Values.CC_API){
                         0 ->{
-                            apiCall.checkAccount(id,"https://eve-dev-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
-                                    "fraudServices/opening/makeFormDecision/{id}")
+                            apiCall.checkAccount("https://eve-dev-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision/$id")
                         }
                         1->{
-                            apiCall.checkAccount(id,"https://eve-prod-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
-                                    "fraudServices/opening/makeFormDecision/{id}")
+                            apiCall.checkAccount("https://eve-prod-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision/$id")
                         }
                         2 ->{
-                            apiCall.checkAccount(id,"https://eve-stg-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
-                                    "fraudServices/opening/makeFormDecision/{id}")
+                            apiCall.checkAccount("https://eve-stg-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/makeFormDecision/$id")
                         }
                         else ->{
                             null

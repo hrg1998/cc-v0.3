@@ -49,10 +49,6 @@ class LoginFragment : TrackerFragment() {
         return myList
     }
 
-    private fun setFields() {
-        editTextEmail.setText(currentEmail)
-        editTextPassword.setText(currentPassword)
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //set onClickListener for your submit button and call trackerClickSubmitButton()
@@ -97,8 +93,8 @@ class LoginFragment : TrackerFragment() {
         //screen navigation tracking
         //pass fragment path and title to trackNavigation method for screen navigation purposes
         ScreenNavigationTracking().trackNavigation(
-            "/activity_login/activity_signup/fragment_signup",
-            "SignUp"
+            "/activity_login/activity_login/fragment_login",
+            "Login"
         )
     }
 }

@@ -35,9 +35,9 @@ class RetrofitHandler {
         return@lazy OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(interceptor)
-            .connectTimeout(60, TimeUnit.MILLISECONDS)
-            .readTimeout(60, TimeUnit.MILLISECONDS)
-            .writeTimeout(60, TimeUnit.MILLISECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build()
     }
 
