@@ -122,7 +122,6 @@ class SignUpActivity : TrackerActivity() {
                         currentConfirmPass = editTextConfirmPassword.text.toString()
                         viewModel.createAcc(currentEmail)
                         trackerClickSubmitButton()
-                        trackerClickSubmitButton()
                         loading = true
                     }
                 }
