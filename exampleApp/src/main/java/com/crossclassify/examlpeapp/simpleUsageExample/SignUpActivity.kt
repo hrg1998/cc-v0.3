@@ -28,18 +28,27 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 //extend from TrackerActivity if you have form in activity and need form content and behavior analysis
 class SignUpActivity : TrackerActivity() {
+
     private var currentEmail: String = ""
     private var currentPassword: String = ""
     private var currentConfirmPass: String = ""
     private var currentUsername: String = ""
     private var lastEmail:String=""
+
     private var maxRetry = 15
+
     private var cancel: Boolean = false
+
     private val apiMode=arrayOf("dev","prod","stg")
     private var mode : Int = 0
+
+    private var requestTime = 0L
+    private var responseTime = 0L
+
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private var id = ""
     private var dialog: Dialog? = null
@@ -120,6 +129,8 @@ class SignUpActivity : TrackerActivity() {
                         currentUsername = editTextUserName.text.toString()
                         currentPassword = editTextPassword.text.toString()
                         currentConfirmPass = editTextConfirmPassword.text.toString()
+
+                        requestTime = System.currentTimeMillis()
                         viewModel.createAcc(currentEmail)
                         trackerClickSubmitButton()
                         loading = true
@@ -159,6 +170,7 @@ class SignUpActivity : TrackerActivity() {
                     if(result.status!=null){
                         when (result.status) {
                             "ready" -> {
+                                responseTime= System.currentTimeMillis()
                                 when(result.isBlocked){
                                     false -> {
                                         if(!cancel)
@@ -189,6 +201,7 @@ class SignUpActivity : TrackerActivity() {
                                             maxRetry--
                                         }
                                     } else {
+                                        responseTime= System.currentTimeMillis()
                                         dialog?.dismiss()
                                         showErrorDialog("Error!", "The system is not available!")
                                         loading = false
@@ -216,6 +229,7 @@ class SignUpActivity : TrackerActivity() {
                     }
                 }
                 is String ->{
+                    responseTime = System.currentTimeMillis()
                     showErrorDialog("Request Time Out!","Please check your connection...")
                     loading=false
                     setFields()
@@ -229,6 +243,7 @@ class SignUpActivity : TrackerActivity() {
                 is CheckAccountResponseModelForDev ->{
                     when (result.status) {
                         "ready" -> {
+                            responseTime = System.currentTimeMillis()
                             when(result.isBlocked){
                                 true -> {
                                     if(!cancel){
@@ -259,6 +274,7 @@ class SignUpActivity : TrackerActivity() {
                                     }
                                 } else {
                                     dialog?.dismiss()
+                                    responseTime= System.currentTimeMillis()
                                     showErrorDialog("Error", "The system is not available!")
                                     loading = false
                                 }
@@ -269,6 +285,7 @@ class SignUpActivity : TrackerActivity() {
                     }
                 }
                 is String ->{
+                    responseTime = System.currentTimeMillis()
                     showErrorDialog("Request Time Out!","Please check your connection...")
                     loading=false
                     setFields()
@@ -282,11 +299,19 @@ class SignUpActivity : TrackerActivity() {
     private fun showErrorDialog(title: String, message: String) {
         dialog?.cancel()
         dialog = Dialog(this)
+
         dialog!!.setContentView(R.layout.custom_dialog)
+
+        dialog!!.progress_bar.visibility=View.GONE
+        dialog!!.response_time.visibility=View.VISIBLE
+
+
         dialog!!.txt_title.text = title
         dialog!!.txt_massage.text= message
         dialog!!.txt_cancel.text="ok"
-        dialog!!.progress_bar.visibility=View.GONE
+        dialog!!.response_time.text= "response time is ${(responseTime- requestTime)/1000} seconds."
+
+
         dialog!!.txt_cancel.setOnClickListener {
             dialog?.dismiss()
         }
@@ -301,6 +326,7 @@ class SignUpActivity : TrackerActivity() {
         dialog = Dialog(this)
         dialog!!.setContentView(R.layout.custom_dialog)
         dialog!!.progress_bar.visibility=View.VISIBLE
+        dialog!!.response_time.visibility=View.GONE
         dialog!!.txt_title.text = title
         dialog!!.txt_massage.text= message
         dialog!!.txt_cancel.text="cancel"
