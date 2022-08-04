@@ -27,9 +27,11 @@ abstract class TrackerSdkApplication : Application() {
         val myApp: TrackerSdkApplication
             get() = instance
     }
+
     private var mMatomoTracker: Tracker? = null
     private var mDimensionQueue: DimensionQueue? = null
     private var mSiteId: Int = 0
+    private var mMode: Int = 0
 
     init {
         instance = this
@@ -51,14 +53,14 @@ abstract class TrackerSdkApplication : Application() {
      */
     @Synchronized
     fun getTracker(): Tracker? {
-        if (mMatomoTracker == null) {
+        if ((mMode != Values.CC_API) || mMatomoTracker == null) {
             mMatomoTracker = onCreateTrackerConfig().build(getMatomo()).apply {
 
                 val fingerprint: Fingerprinter = FingerprinterFactory
                     .getInstance(applicationContext, Configuration(version = 3))
 
                 fingerprint.getFingerprint {
-                    userId=it.fingerprint
+                    userId = it.fingerprint
                 }
 
                 fingerprint.getDeviceId { result ->
@@ -68,11 +70,11 @@ abstract class TrackerSdkApplication : Application() {
                         MODE_PRIVATE
                     )
                     sharedPreferences.edit().putString("tracker.visitorid", visitorId).apply()
-                    sharedPreferences.edit().putString("tracker.fingerprint",userId).apply()
+                    sharedPreferences.edit().putString("tracker.fingerprint", userId).apply()
                 }
             }
+            mMode = Values.CC_API
         }
-
         return mMatomoTracker
     }
 
@@ -97,23 +99,23 @@ abstract class TrackerSdkApplication : Application() {
 
     open fun createDefaultConfig(siteId: Int) {
         this.mSiteId = siteId
-        Values.SITE_ID=siteId
+        Values.SITE_ID = siteId
     }
 
     /** Initialize Matomo EndPoint **/
     fun onCreateTrackerConfig(): TrackerBuilder {
 
         //TODO: THIS FUNCTIONALITY DOES NOT WORK!
-        var apiUrl=""
-        when(Values.CC_API){
-            0 ->{
-                apiUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
+        var apiUrl = ""
+        when (Values.CC_API) {
+            0 -> {
+                apiUrl = "https://9a2n6dh7ae.execute-api.ap-southeast-2.amazonaws.com/matomo.php"
             }
-            1->{
-                apiUrl ="https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+            1 -> {
+                apiUrl = "https://7afy3zglhe.execute-api.ap-southeast-2.amazonaws.com/matomo.php"
             }
-            2->{
-                apiUrl ="https://matomo-cc-stg-dinl5i5e5a-ts.a.run.app/"
+            2 -> {
+                apiUrl = "https://i1uaiuond3.execute-api.ap-southeast-2.amazonaws.com/matomo.php"
             }
         }
         return TrackerBuilder.createDefault(

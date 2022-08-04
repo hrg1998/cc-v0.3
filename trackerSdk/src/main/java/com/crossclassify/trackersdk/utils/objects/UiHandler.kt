@@ -30,7 +30,6 @@ object UiHandler {
 
     /** Get Tracker To Start Track **/
     fun getTracker(application: TrackerSdkApplication): Tracker? {
-        application.onCreateTrackerConfig()
         return application.getTracker()
     }
 }

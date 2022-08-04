@@ -210,12 +210,12 @@ abstract class TrackerDialogFragment : DialogFragment(),
                         // total time spent on field
                         interactionTime += view.getAllFocusTime()
                         // if there is a change after taking the metadata, the metadata will be rebuilt and the metadata field will be added.
-                        if (view.changeAfterCreateMetaData) {
+//                        if (view.changeAfterCreateMetaData) {
                             view.createMetaData(isSubmitted)
                             view.getMetaData()?.let {
                                 fieldMetaData.add(it)
                             }
-                        }
+//                        }
                     } else {
                         // if we do not have Get Data, we will pass the action to the timer
                         if (view.changeAfterCreateMetaData && !changeStartTime) {
@@ -387,7 +387,24 @@ abstract class TrackerDialogFragment : DialogFragment(),
             override fun run() {
                 createFormMetaData(false)
                 getMetaData()?.let { it1 -> formRepo.sendData(it1, faId) }
+
+                faVid = RandomStringGenerator.getRandomString()
+                pvId = RandomStringGenerator.getRandomString()
+
                 firstTimeSeeForm = false
+
+                fieldMetaData.clear()
+                formMetaData = null
+
+                firstFocusFieldTime = Long.MAX_VALUE
+                firstFocusFieldName = null
+
+                lastChangingFieldTime = 0
+                lastChangingFieldName = null
+
+                interactionTime = 0
+
+                startTime = System.currentTimeMillis()
             }
         }, 30000)
     }
@@ -416,6 +433,8 @@ abstract class TrackerDialogFragment : DialogFragment(),
             }
         getMetaData()?.let { it1 -> formRepo.sendData(it1, faId) }
         faVid = RandomStringGenerator.getRandomString()
+        pvId = RandomStringGenerator.getRandomString()
+
         firstTimeSeeForm = false
 
         fieldMetaData.clear()

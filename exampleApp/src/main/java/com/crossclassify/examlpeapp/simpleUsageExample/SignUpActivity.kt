@@ -17,7 +17,8 @@ import com.crossclassify.examlpeapp.R
 import com.crossclassify.examlpeapp.commonEpoxyExample.Epoxy2Activity
 import com.crossclassify.examlpeapp.defaultEpoxyWithControllerExample.EpoxyActivity
 import com.crossclassify.examlpeapp.defaultRecyclerViewExample.RecyclerActivity
-import com.crossclassify.examlpeapp.model.CheckAccountResponseModelForDev
+import com.crossclassify.examlpeapp.model.CheckAccountResponseModel
+import com.crossclassify.examlpeapp.model.ScoreResponseModel
 import com.crossclassify.trackersdk.ScreenNavigationTracking
 import com.crossclassify.trackersdk.TrackerActivity
 import com.crossclassify.trackersdk.model.FieldMetaData
@@ -28,7 +29,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
 
 //extend from TrackerActivity if you have form in activity and need form content and behavior analysis
 class SignUpActivity : TrackerActivity() {
@@ -37,14 +37,14 @@ class SignUpActivity : TrackerActivity() {
     private var currentPassword: String = ""
     private var currentConfirmPass: String = ""
     private var currentUsername: String = ""
-    private var lastEmail:String=""
+    private var lastEmail: String = ""
 
     private var maxRetry = 15
 
     private var cancel: Boolean = false
 
-    private val apiMode=arrayOf("dev","prod","stg")
-    private var mode : Int = 0
+    private val apiMode = arrayOf("dev", "prod", "stg")
+    private var mode: Int = 0
 
     private var requestTime = 0L
     private var responseTime = 0L
@@ -52,6 +52,7 @@ class SignUpActivity : TrackerActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private var id = ""
     private var dialog: Dialog? = null
+    private var score: Int = 0
     private var loading = false
         set(value) {
             field = value
@@ -68,6 +69,7 @@ class SignUpActivity : TrackerActivity() {
     override fun getExternalMetaData(): List<FieldMetaData>? {
         return null
     }
+
     private fun fillAllFields(): MutableList<Any> {
         val myList = mutableListOf<Any>()
         when {
@@ -110,13 +112,21 @@ class SignUpActivity : TrackerActivity() {
 
         //set onClickListener for your submit button and call trackerClickSubmitButton
         btnSubmit.setOnClickListener {
-            Log.i("crossClassify:",Values.CC_API.toString())
+            Log.i("crossClassify:", Values.CC_API.toString())
             cancel = false
             maxRetry = 15
             lastEmail = currentEmail
+
             if (fillAllFields()[1] == true) {
                 when {
-                    editTextPassword.text.toString()!=editTextConfirmPassword.text.toString() -> {
+                    editTextPassword.text.toString().length <= 4 -> {
+                        showErrorDialog(
+                            "Error",
+                            "Your password must be at least 5 characters long."
+                        )
+                        loading = false
+                    }
+                    editTextPassword.text.toString() != editTextConfirmPassword.text.toString() -> {
                         showErrorDialog("Error", "Confirm password doesn't match.")
                         loading = false
                     }
@@ -163,29 +173,17 @@ class SignUpActivity : TrackerActivity() {
         }
 
 
-
+        var temp: CheckAccountResponseModel? = null
         viewModel.checkCreateAccountResult.observe(this) { result ->
-            when(result){
-                is CheckAccountResponseModelForDev-> {
-                    if(result.status!=null){
+            when (result) {
+                is CheckAccountResponseModel -> {
+                    if (result.status != null) {
                         when (result.status) {
                             "ready" -> {
-                                responseTime= System.currentTimeMillis()
-                                when(result.isBlocked){
-                                    false -> {
-                                        if(!cancel)
-                                        goToNextPage()
-                                    }
-                                    true-> {
-                                        if(!cancel){
-                                            showErrorDialog("Blocked", "You can't open this account")
-                                            loading =false
-                                            setFields()
-                                        }
+                                temp = result
+                                viewModel.getScore(currentEmail)
+                                responseTime = System.currentTimeMillis()
 
-                                    }
-                                }
-                                loading = false
                             }
                             "call_for_calc" -> {
                                 if (!cancel) {
@@ -201,37 +199,37 @@ class SignUpActivity : TrackerActivity() {
                                             maxRetry--
                                         }
                                     } else {
-                                        responseTime= System.currentTimeMillis()
+                                        responseTime = System.currentTimeMillis()
                                         dialog?.dismiss()
                                         showErrorDialog("Error!", "The system is not available!")
+
                                         loading = false
                                     }
                                 }
                             }
                         }
-                    }
-                    else {
+                    } else {
                         id = result._id
                         viewModel.checkAcc(result._id)
                     }
                 }
-                is Int ->{
-                    loading = if(result==403){
+                is Int -> {
+                    loading = if (result == 403) {
                         showErrorDialog("Error", "Please connect with VPN")
-                        loading=false
+                        loading = false
                         setFields()
                         false
-                    }else{
+                    } else {
                         showErrorDialog("Unknown Response!", "Please try again...")
-                        loading=false
+                        loading = false
                         setFields()
                         false
                     }
                 }
-                is String ->{
+                is String -> {
                     responseTime = System.currentTimeMillis()
-                    showErrorDialog("Request Time Out!","Please check your connection...")
-                    loading=false
+                    showErrorDialog("Request Time Out!", "Please check your connection...")
+                    loading = false
                     setFields()
                 }
             }
@@ -239,25 +237,14 @@ class SignUpActivity : TrackerActivity() {
         }
 
         viewModel.checkAccountResult.observe(this) { result ->
-            when (result){
-                is CheckAccountResponseModelForDev ->{
+            when (result) {
+                is CheckAccountResponseModel -> {
                     when (result.status) {
                         "ready" -> {
+                            temp = result
+                            viewModel.getScore(email = currentEmail)
                             responseTime = System.currentTimeMillis()
-                            when(result.isBlocked){
-                                true -> {
-                                    if(!cancel){
-                                        showErrorDialog("Blocked", "You can't open this account")
-                                        loading =false
-                                        setFields()
-                                    }
-                                }
-                                false -> {
-                                    if(!cancel)
-                                    goToNextPage()
-                                }
-                            }
-                            loading = false
+
                         }
                         "call_for_calc" -> {
                             if (!cancel) {
@@ -274,7 +261,7 @@ class SignUpActivity : TrackerActivity() {
                                     }
                                 } else {
                                     dialog?.dismiss()
-                                    responseTime= System.currentTimeMillis()
+                                    responseTime = System.currentTimeMillis()
                                     showErrorDialog("Error", "The system is not available!")
                                     loading = false
                                 }
@@ -284,15 +271,50 @@ class SignUpActivity : TrackerActivity() {
                         }
                     }
                 }
-                is String ->{
+                is String -> {
                     responseTime = System.currentTimeMillis()
-                    showErrorDialog("Request Time Out!","Please check your connection...")
-                    loading=false
+                    showErrorDialog("Request Time Out!", "Please check your connection...")
+                    loading = false
                     setFields()
                 }
             }
 
 
+        }
+
+        viewModel.scoreResult.observe(this) { result ->
+            when (result) {
+                is ScoreResponseModel -> {
+                    for (item in result.Items) {
+                        score = item.automaticDecisionDetail?.score ?: 0
+                        break
+                    }
+                    when (temp?.isBlocked) {
+                        false -> {
+                            if (!cancel) {
+                                showErrorDialog(
+                                    "Welcome",
+                                    "Welcome to our community \n Your score is $score. "
+                                )
+                                goToNextPage()
+                            }
+
+                        }
+                        true -> {
+                            if (!cancel) {
+                                showErrorDialog(
+                                    "Blocked",
+                                    "You can't open this account \n Your score is $score "
+                                )
+                                loading = false
+                                setFields()
+                            }
+
+                        }
+                    }
+                    loading = false
+                }
+            }
         }
     }
 
@@ -302,14 +324,20 @@ class SignUpActivity : TrackerActivity() {
 
         dialog!!.setContentView(R.layout.custom_dialog)
 
-        dialog!!.progress_bar.visibility=View.GONE
-        dialog!!.response_time.visibility=View.VISIBLE
+        dialog!!.progress_bar.visibility = View.GONE
+        dialog!!.response_time.visibility = View.GONE
 
 
         dialog!!.txt_title.text = title
-        dialog!!.txt_massage.text= message
-        dialog!!.txt_cancel.text="ok"
-        dialog!!.response_time.text= "response time is ${(responseTime- requestTime)/1000} seconds."
+        dialog!!.txt_massage.text = message
+        dialog!!.txt_cancel.text = "ok"
+        if (responseTime != 0L) {
+            dialog!!.response_time.visibility = View.VISIBLE
+            dialog!!.response_time.text =
+                "response time is ${(responseTime - requestTime) / 1000} seconds. \nyour score is $score."
+        }
+
+
 
 
         dialog!!.txt_cancel.setOnClickListener {
@@ -325,11 +353,11 @@ class SignUpActivity : TrackerActivity() {
         cancel = false
         dialog = Dialog(this)
         dialog!!.setContentView(R.layout.custom_dialog)
-        dialog!!.progress_bar.visibility=View.VISIBLE
-        dialog!!.response_time.visibility=View.GONE
+        dialog!!.progress_bar.visibility = View.VISIBLE
+        dialog!!.response_time.visibility = View.GONE
         dialog!!.txt_title.text = title
-        dialog!!.txt_massage.text= message
-        dialog!!.txt_cancel.text="cancel"
+        dialog!!.txt_massage.text = message
+        dialog!!.txt_cancel.text = "cancel"
         dialog!!.txt_cancel.setOnClickListener {
             dialog?.dismiss()
             loading = false
@@ -362,11 +390,14 @@ class SignUpActivity : TrackerActivity() {
 
         val sv = menu?.findItem(R.id.mySwitch)?.actionView?.findViewById<Button>(R.id.action_switch)
         sv?.setOnClickListener {
-            mode = (mode+1)%3
+            mode = (mode + 1) % 3
             sv.text = apiMode[mode]
-            Values.CC_API= mode
+            Values.CC_API = mode
+
+            ScreenNavigationTracking().trackNavigation("/activity_splash/activity_signup", "signup")
         }
-        onResume()
+
+
         return true
 
     }

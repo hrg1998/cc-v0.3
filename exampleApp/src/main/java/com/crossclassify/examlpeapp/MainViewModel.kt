@@ -2,7 +2,7 @@ package com.crossclassify.examlpeapp
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.crossclassify.examlpeapp.model.CheckAccountResponseModelForDev
+import com.crossclassify.examlpeapp.model.CheckAccountResponseModel
 import com.crossclassify.examlpeapp.service.ApiCall
 import com.crossclassify.examlpeapp.util.SingleLiveEvent
 import com.crossclassify.examlpeapp.util.Utils.toConvertStringJsonToModel
@@ -22,6 +22,10 @@ class MainViewModel : ViewModel() {
     private val _checkAccountResult = SingleLiveEvent<Any?>()
     val checkAccountResult: LiveData<Any?>
         get() = _checkAccountResult
+
+    private val _scoreResult=SingleLiveEvent<Any?>()
+    val scoreResult:LiveData<Any?>
+        get() = _scoreResult
 
     var baseUrl =""
 
@@ -60,7 +64,7 @@ class MainViewModel : ViewModel() {
                     } else {
                         if (response.code() == 409)
                             response.errorBody()?.string()
-                                ?.toConvertStringJsonToModel(CheckAccountResponseModelForDev::class.java)
+                                ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
                         else response.code()
                     }
 
@@ -104,7 +108,7 @@ class MainViewModel : ViewModel() {
                     } else {
                         if (response.code() == 409)
                             response.errorBody()?.string()
-                                ?.toConvertStringJsonToModel(CheckAccountResponseModelForDev::class.java)
+                                ?.toConvertStringJsonToModel(CheckAccountResponseModel::class.java)
                         else response.code()
                     }
 
@@ -112,6 +116,49 @@ class MainViewModel : ViewModel() {
                     "timeOut"
                 }
             )
+        }
+    }
+
+    fun getScore(email:String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response =
+                try {
+
+                    when(Values.CC_API){
+                        0 ->{
+                            apiCall.getScore("https://eve-dev-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/decisions?sort=-_created&where={%22account.email%22:%22$email%22}")
+                        }
+                        1->{
+                            apiCall.getScore("https://eve-prod-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/decisions?sort=-_created&where={%22account.email%22:%22$email%22}")
+                        }
+                        2 ->{
+                            apiCall.getScore("https://eve-stg-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
+                                    "fraudServices/opening/decisions?sort=-_created&where={%22account.email%22:%22$email%22}")
+                        }
+                        else ->{
+                            null
+                        }
+                    }
+                } catch (e: Exception) {
+                    null
+                }
+            _scoreResult.postValue(
+                if (response != null) {
+
+                    if (response.isSuccessful) {
+                        // check response
+                        response.body()
+                    } else {
+
+                    }
+
+                } else {
+                    "timeOut"
+                }
+            )
+
         }
     }
 }

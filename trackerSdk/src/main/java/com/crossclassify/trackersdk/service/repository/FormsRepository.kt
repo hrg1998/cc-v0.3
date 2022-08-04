@@ -44,13 +44,13 @@ class FormsRepository(private val context: Context) {
                 var baseUrl =""
                 when(Values.CC_API){
                     0 ->{
-                        baseUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
+                        baseUrl = "https://9a2n6dh7ae.execute-api.ap-southeast-2.amazonaws.com/"
                     }
                     1->{
-                        baseUrl ="https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+                        baseUrl ="https://7afy3zglhe.execute-api.ap-southeast-2.amazonaws.com/"
                     }
                     2->{
-                        baseUrl ="https://matomo-cc-stg-dinl5i5e5a-ts.a.run.app/"
+                        baseUrl ="https://i1uaiuond3.execute-api.ap-southeast-2.amazonaws.com/"
                     }
                 }
                 newFormPath = baseUrl + newFormPath
@@ -81,13 +81,13 @@ class FormsRepository(private val context: Context) {
                 var baseUrl=""
                 when(Values.CC_API){
                     0 ->{
-                        baseUrl = "https://matomo-cc-dev-dinl5i5e5a-ts.a.run.app/"
+                        baseUrl = "https://9a2n6dh7ae.execute-api.ap-southeast-2.amazonaws.com/"
                     }
                     1->{
-                        baseUrl ="https://matomo-cc-prod-dinl5i5e5a-ts.a.run.app/"
+                        baseUrl ="https://7afy3zglhe.execute-api.ap-southeast-2.amazonaws.com/"
                     }
                     2->{
-                        baseUrl ="https://matomo-cc-stg-dinl5i5e5a-ts.a.run.app/"
+                        baseUrl ="https://i1uaiuond3.execute-api.ap-southeast-2.amazonaws.com/"
                     }
                 }
                 metaDataPath = baseUrl+metaDataPath

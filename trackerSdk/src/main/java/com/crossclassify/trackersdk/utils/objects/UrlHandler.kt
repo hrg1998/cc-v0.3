@@ -23,7 +23,18 @@ object UrlHandler {
                 "&pv_id=${formMetaData.pv_id}&fa_fp[0][fa_vid]=${formMetaData.fa_vid}"
     }
 
-
+    fun generateEmptyMetadata(formMetaData: FormMetaData,formName: String):String{
+        val calendar: Calendar = Calendar.getInstance()
+        val date = iso8601Format()
+        val hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
+        val minutes: Int = calendar.get(Calendar.MINUTE)
+        val seconds: Int = calendar.get(Calendar.SECOND)
+        return "matomo.php?action_name=" +
+                "&idsite=${formMetaData.id_site}&rec=1&r=954857&h=$hour&m=$minutes&s=$seconds&date=${date}" +
+                "&url=$formName" +
+                "&uid=${formMetaData.uid}&_id=${formMetaData._id}&_idn=1&_refts=0&send_image=0&pdf=1&qt=0&realp=0&wma=0&fla=0&java=0&ag=0&cookie=1&res=${formMetaData.resolustion}&pv_id=${formMetaData.pv_id}&fa_pv=1" +
+                "&fa_fp[0][fa_vid]=${formMetaData.fa_vid}&fa_fp[0][fa_id]=${formName}&fa_fp[0][fa_fv]=1&pf_net=0&pf_srv=0&pf_tfr=2&pf_dm1=30&pf_dm2=8&pf_onl=0"
+    }
     fun generateMetaDataUrl(formMetaData: FormMetaData): String {
 
         val fieldsAttr = generateFieldsUrl(formMetaData)
@@ -75,7 +86,7 @@ object UrlHandler {
 
         var fieldsAttr = "["
 
-        for ((i, field) in formMetaData.fieldsMetaData.withIndex()) {
+        for ((i, field) in formMetaData.fieldsMetaData.withIndex()!!) {
 
             var str =
                 "{\"fa_fts\":${field.fa_fts},\"fa_fht\":${field.fa_fht}," +

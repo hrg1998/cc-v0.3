@@ -6,22 +6,45 @@
     android:layout_height="match_parent"
     tools:context=".simpleUsageExample.DashboardActivity"
     android:background="@color/white">
+
+
     <TextView
+
+        android:id="@+id/welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
         android:layout_above="@id/image"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+
+        android:text="Welcome To Bita"
         android:textColor="@color/black"
-        android:textSize="24dp"
-        android:layout_margin="16dp"
-        />
+        android:textSize="24dp" />
+
+    <TextView
+
+        android:id="@+id/LogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcome"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Sign out"
+        android:textColor="@color/red"
+        android:textSize="16dp" />
+
     <ImageView
         android:id="@+id/image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/todo"
-        android:src="@drawable/ic_register_hero"
         android:layout_centerInParent="true"
-        />
+        android:contentDescription="@string/todo"
+        android:layout_marginTop="20dp"
+
+        android:src="@drawable/ic_register_hero" />
 </RelativeLayout>
