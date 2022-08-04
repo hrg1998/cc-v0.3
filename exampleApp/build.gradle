@@ -41,6 +41,38 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    flavorDimensions "product"
+    productFlavors {
+        //one app
+        bacheha {
+            dimension "product"
+
+            applicationId "com.bita.bitatrackerapp.bacheha"
+        }
+        modiran {
+            dimension "product"
+            applicationId "com.bita.bitatrackerapp.modiran"
+        }
+    }
+
+    sourceSets {
+        bacheha {
+            res {
+                srcDirs 'src/bacheha/res'
+            }
+            java {
+                srcDirs 'src/bacheha/java'
+            }
+        }
+        modiran {
+            res {
+                srcDirs 'src/modiran/res'
+            }
+            java {
+                srcDirs 'src/modiran/java'
+            }
+        }
+    }
 }
 
 dependencies {

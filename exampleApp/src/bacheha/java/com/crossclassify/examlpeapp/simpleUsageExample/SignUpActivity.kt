@@ -178,10 +178,11 @@ class SignUpActivity : TrackerActivity() {
             when (result) {
                 is CheckAccountResponseModel -> {
                     if (result.status != null) {
+                        temp = result
+                        viewModel.getScore(currentEmail)
+
                         when (result.status) {
                             "ready" -> {
-                                temp = result
-                                viewModel.getScore(currentEmail)
                                 responseTime = System.currentTimeMillis()
 
                             }
@@ -239,6 +240,7 @@ class SignUpActivity : TrackerActivity() {
         viewModel.checkAccountResult.observe(this) { result ->
             when (result) {
                 is CheckAccountResponseModel -> {
+
                     when (result.status) {
                         "ready" -> {
                             temp = result
@@ -294,9 +296,9 @@ class SignUpActivity : TrackerActivity() {
                             if (!cancel) {
                                 showErrorDialog(
                                     "Welcome",
-                                    "Welcome to our community \n Your score is $score. "
+                                    "Welcome to our community \nYour score is $score. ",
+                                    true
                                 )
-                                goToNextPage()
                             }
 
                         }
@@ -304,7 +306,7 @@ class SignUpActivity : TrackerActivity() {
                             if (!cancel) {
                                 showErrorDialog(
                                     "Blocked",
-                                    "You can't open this account \n Your score is $score "
+                                    "You can't open this account \nYour score is $score. "
                                 )
                                 loading = false
                                 setFields()
@@ -318,7 +320,7 @@ class SignUpActivity : TrackerActivity() {
         }
     }
 
-    private fun showErrorDialog(title: String, message: String) {
+    private fun showErrorDialog(title: String, message: String, isWelcome : Boolean = false) {
         dialog?.cancel()
         dialog = Dialog(this)
 
@@ -334,7 +336,7 @@ class SignUpActivity : TrackerActivity() {
         if (responseTime != 0L) {
             dialog!!.response_time.visibility = View.VISIBLE
             dialog!!.response_time.text =
-                "response time is ${(responseTime - requestTime) / 1000} seconds. \nyour score is $score."
+                "response time is ${(responseTime - requestTime) / 1000} seconds."
         }
 
 
@@ -342,6 +344,11 @@ class SignUpActivity : TrackerActivity() {
 
         dialog!!.txt_cancel.setOnClickListener {
             dialog?.dismiss()
+
+            if (isWelcome){
+                goToNextPage()
+            }
+
         }
 
         dialog?.show()
