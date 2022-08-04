@@ -7,9 +7,9 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_safe_gate"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_safe_gate_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BitaTrackerApp"
         android:usesCleartextTraffic="true">

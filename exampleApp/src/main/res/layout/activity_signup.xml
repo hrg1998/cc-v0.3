@@ -275,7 +275,7 @@
                 android:layout_gravity="right"
                 android:id="@+id/version"
                 style="@style/parent"
-                android:layout_marginTop="@dimen/loginViewsMargin"
+                android:layout_marginTop="30dp"
                 android:text="@string/version"
 
                 android:textColor="@color/hint"
