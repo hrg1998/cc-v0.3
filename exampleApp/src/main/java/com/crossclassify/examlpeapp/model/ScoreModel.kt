@@ -3,14 +3,40 @@ package com.crossclassify.examlpeapp.model
 import com.google.gson.annotations.SerializedName
 data class ScoreResponseModel(
 
-    @SerializedName("_items" ) var Items : ArrayList<Items> = arrayListOf(),
-    @SerializedName("_links" ) var Links : Links?           = Links(),
-    @SerializedName("_meta"  ) var Meta  : Meta?            = Meta()
+    @SerializedName("_id"                     ) var Id                      : String?                  = null,
+    @SerializedName("serviceName"             ) var serviceName             : String?                  = null,
+    @SerializedName("projectId"               ) var projectId               : String?                  = null,
+    @SerializedName("account"                 ) var account                 : ScoreAccount?                 = ScoreAccount(),
+    @SerializedName("device"                  ) var device                  : Device?                  = Device(),
+    @SerializedName("rule"                    ) var rule                    : Rule?                    = Rule(),
+    @SerializedName("automaticDecisionDetail" ) var automaticDecisionDetail : AutomaticDecisionDetail? = AutomaticDecisionDetail(),
+    @SerializedName("_updated"                ) var Updated                 : String?                  = null,
+    @SerializedName("_created"                ) var Created                 : String?                  = null,
+    @SerializedName("kind"                    ) var kind                    : String?                  = null,
+    @SerializedName("_etag"                   ) var Etag                    : String?                  = null,
+    @SerializedName("_links"                  ) var Links                   : Links?                   = Links()
 
 )
 data class ScoreAccount (
 
     @SerializedName("email" ) var email : String? = null
+
+)
+data class Exceptions (
+
+    @SerializedName("fingerprint" ) var fingerprint : String? = null
+
+)
+data class Collection (
+
+    @SerializedName("title" ) var title : String? = null,
+    @SerializedName("href"  ) var href  : String? = null
+
+)
+
+data class Device (
+
+    @SerializedName("fingerprint" ) var fingerprint : String? = null
 
 )
 
@@ -24,57 +50,12 @@ data class AutomaticDecisionDetail (
 
 )
 
-data class Exceptions (
-
-    @SerializedName("fingerprint" ) var fingerprint : String? = null
-
-)
-
-
-data class Items (
-
-    @SerializedName("_id"                     ) var Id                      : String?                  = null,
-    @SerializedName("serviceName"             ) var serviceName             : String?                  = null,
-    @SerializedName("projectId"               ) var projectId               : String?                  = null,
-    @SerializedName("account"                 ) var account                 : ScoreAccount?                 = ScoreAccount(),
-    @SerializedName("rule"                    ) var rule                    : Rule?                    = Rule(),
-    @SerializedName("automaticDecisionDetail" ) var automaticDecisionDetail : AutomaticDecisionDetail? = AutomaticDecisionDetail(),
-    @SerializedName("_updated"                ) var Updated                 : String?                  = null,
-    @SerializedName("_created"                ) var Created                 : String?                  = null,
-    @SerializedName("kind"                    ) var kind                    : String?                  = null,
-    @SerializedName("_etag"                   ) var Etag                    : String?                  = null,
-    @SerializedName("_links"                  ) var Links                   : Links?                   = Links()
-
-)
-
-data class Last (
-
-    @SerializedName("title" ) var title : String? = null,
-    @SerializedName("href"  ) var href  : String? = null
-
-)
-
 data class Links (
 
-    @SerializedName("parent" ) var parent : Parent? = Parent(),
-    @SerializedName("self"   ) var self   : Self?   = Self(),
-    @SerializedName("next"   ) var next   : Next?   = Next(),
-    @SerializedName("last"   ) var last   : Last?   = Last()
-
-)
-
-data class Meta (
-
-    @SerializedName("page"        ) var page       : Int? = null,
-    @SerializedName("max_results" ) var maxResults : Int? = null,
-    @SerializedName("total"       ) var total      : Int? = null
-
-)
-
-data class Next (
-
-    @SerializedName("title" ) var title : String? = null,
-    @SerializedName("href"  ) var href  : String? = null
+    @SerializedName("self"       ) var self       : Self?       = Self(),
+    @SerializedName("related"    ) var related    : Related?    = Related(),
+    @SerializedName("parent"     ) var parent     : Parent?     = Parent(),
+    @SerializedName("collection" ) var collection : Collection? = Collection()
 
 )
 
@@ -84,6 +65,7 @@ data class Parent (
     @SerializedName("href"  ) var href  : String? = null
 
 )
+
 
 data class ProjectId (
 
@@ -111,3 +93,4 @@ data class Self (
     @SerializedName("href"  ) var href  : String? = null
 
 )
+

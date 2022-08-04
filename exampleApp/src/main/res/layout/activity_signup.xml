@@ -271,7 +271,17 @@
 
             </LinearLayout>
 
+            <TextView
+                android:layout_gravity="right"
+                android:id="@+id/version"
+                style="@style/parent"
+                android:layout_marginTop="@dimen/loginViewsMargin"
+                android:text="@string/version"
 
+                android:textColor="@color/hint"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                tools:ignore="UsingOnClickInXml" />
         </LinearLayout>
     </ScrollView>
 

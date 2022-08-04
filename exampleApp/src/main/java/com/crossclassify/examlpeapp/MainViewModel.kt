@@ -23,9 +23,9 @@ class MainViewModel : ViewModel() {
     val checkAccountResult: LiveData<Any?>
         get() = _checkAccountResult
 
-    private val _scoreResult=SingleLiveEvent<Any?>()
-    val scoreResult:LiveData<Any?>
-        get() = _scoreResult
+    private val _deviceScoreResult=SingleLiveEvent<Any?>()
+    val deviceScoreResult:LiveData<Any?>
+        get() = _deviceScoreResult
 
     var baseUrl =""
 
@@ -119,23 +119,22 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getScore(email:String) {
+    fun getScore(id:String) {
         CoroutineScope(Dispatchers.IO).launch {
             val response =
                 try {
-
                     when(Values.CC_API){
                         0 ->{
                             apiCall.getScore("https://eve-dev-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
-                                    "fraudServices/opening/decisions?sort=-_created&where={%22account.email%22:%22$email%22}")
+                                    "fraudServices/opening/decisions/$id")
                         }
                         1->{
                             apiCall.getScore("https://eve-prod-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
-                                    "fraudServices/opening/decisions?sort=-_created&where={%22account.email%22:%22$email%22}")
+                                    "fraudServices/opening/decisions/$id")
                         }
                         2 ->{
                             apiCall.getScore("https://eve-stg-dinl5i5e5a-ts.a.run.app/projects/62274ab07881f1715a512db6/" +
-                                    "fraudServices/opening/decisions?sort=-_created&where={%22account.email%22:%22$email%22}")
+                                    "fraudServices/opening/$id")
                         }
                         else ->{
                             null
@@ -144,7 +143,7 @@ class MainViewModel : ViewModel() {
                 } catch (e: Exception) {
                     null
                 }
-            _scoreResult.postValue(
+            _deviceScoreResult.postValue(
                 if (response != null) {
 
                     if (response.isSuccessful) {

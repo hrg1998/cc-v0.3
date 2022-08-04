@@ -48,7 +48,13 @@ class SignUpActivity : TrackerActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private var id = ""
     private var dialog: Dialog? = null
-    private var score: Int = 0
+
+    private var accountDecisionId: String? = null
+    private var deviceDecisionId: String? = null
+
+    private var deviceScore: Int = 0
+    private var accountScore: Int = 0
+
     private var loading = false
         set(value) {
             field = value
@@ -162,7 +168,23 @@ class SignUpActivity : TrackerActivity() {
                         when (result.status) {
                             "ready" -> {
                                 temp = result
-                                viewModel.getScore(currentEmail)
+
+                                accountDecisionId =
+                                    result.decisionDetails?.decisionOnAccount?.decisionId
+                                deviceDecisionId =
+                                    result.decisionDetails?.decisionOnAccount?.decisionId
+
+                                when {
+                                    accountDecisionId != null -> {
+                                        viewModel.getScore(accountDecisionId!!)
+                                    }
+                                    deviceDecisionId!=null -> {
+                                        viewModel.getScore(deviceDecisionId!!)
+                                    }
+                                    else -> {
+                                        showResult(result)
+                                    }
+                                }
                             }
                             "call_for_calc" -> {
                                 if (!cancel) {
@@ -220,8 +242,20 @@ class SignUpActivity : TrackerActivity() {
                     when (result.status) {
                         "ready" -> {
                             temp = result
-                            viewModel.getScore(email = currentEmail)
+                            accountDecisionId = result.decisionDetails?.decisionOnAccount?.decisionId
+                            deviceDecisionId = result.decisionDetails?.decisionOnDevice?.decisionId
 
+                            when {
+                                accountDecisionId != null -> {
+                                    viewModel.getScore(accountDecisionId!!)
+                                }
+                                deviceDecisionId!=null -> {
+                                    viewModel.getScore(deviceDecisionId!!)
+                                }
+                                else -> {
+                                    showResult(result)
+                                }
+                            }
 
                         }
                         "call_for_calc" -> {
@@ -259,43 +293,59 @@ class SignUpActivity : TrackerActivity() {
 
         }
 
-        viewModel.scoreResult.observe(this) { result ->
+        viewModel.deviceScoreResult.observe(this) { result ->
             when (result) {
                 is ScoreResponseModel -> {
-                    for (item in result.Items) {
-                        score = item.automaticDecisionDetail?.score ?: 0
-                        break
+                    if (result.account != null) {
+                        accountScore = result.automaticDecisionDetail?.score!!
+                        accountDecisionId = null
                     }
-                    when (temp?.isBlocked) {
-                        false -> {
-                            if (!cancel) {
-                                showErrorDialog(
-                                    "Welcome",
-                                    "Welcome to our community \n Your score is $score. ",
-                                    true
-                                )
-                            }
-
-                        }
-                        true -> {
-                            if (!cancel) {
-                                showErrorDialog(
-                                    "Blocked",
-                                    "You can't open this account \n Your score is $score "
-                                )
-                                loading = false
-                                setFields()
-                            }
-
-                        }
+                    if (result.device != null) {
+                        deviceScore = result.automaticDecisionDetail?.score!!
+                        deviceDecisionId = null
                     }
-                    loading = false
+                    if (!deviceDecisionId.isNullOrEmpty()) {
+                        viewModel.getScore(deviceDecisionId!!)
+                        return@observe
+                    }
+                    temp?.let { showResult(it) }
+
                 }
             }
         }
     }
 
-    private fun showErrorDialog(title: String, message: String, isWelcome:Boolean=false) {
+    private fun showResult(temp:CheckAccountResponseModel){
+        when (temp?.isBlocked) {
+            false -> {
+                if (!cancel) {
+                    showErrorDialog(
+                        "Welcome",
+                        "Welcome to our community \n" +
+                                "Your device score is $deviceScore.\n" +
+                                "Your account score is $accountScore.  ",
+                        true
+                    )
+                }
+
+            }
+            true -> {
+                if (!cancel) {
+                    showErrorDialog(
+                        "Blocked",
+                        "You can't open this account \n" +
+                                "Your device score is $deviceScore.\n" +
+                                "Your account score is $accountScore. "
+                    )
+                    loading = false
+                    setFields()
+                }
+
+            }
+        }
+        loading = false
+    }
+    private fun showErrorDialog(title: String, message: String, isWelcome: Boolean = false) {
         dialog?.cancel()
         dialog = Dialog(this)
 
@@ -312,7 +362,7 @@ class SignUpActivity : TrackerActivity() {
         dialog!!.txt_cancel.setOnClickListener {
             dialog?.dismiss()
 
-            if (isWelcome){
+            if (isWelcome) {
                 goToNextPage()
             }
 
